@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <title>layui-vue和vue3的首页</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 引入 layui-vue 样式 -->
+    <link rel="stylesheet" type="text/css" href="https://unpkg.com/@layui/layui-vue/lib/index.css">
+    <!-- 引入 Vue 3, 使用全局变量 Vue -->
+    <script src="https://unpkg.com/vue@3"></script>
+    <!-- 引入 layui-vue 组件库, 使用全局变量 LayuiVue -->
+    <script src="https://unpkg.com/@layui/layui-vue"></script>
+</head>
+
+<body>
+<div id="app">
+    <lay-icon type="layui-icon-star" size="26px" color="red"></lay-icon>
+    <lay-icon type="layui-icon-heart" size="26px" color="red"></lay-icon>
+    <lay-icon type="layui-icon-heart-fill" size="26px" color="red"></lay-icon>
+    <lay-icon type="layui-icon-snowflake" size="26px"></lay-icon>
+    <lay-line>🌲 🌲 🌲 🌲</lay-line>
+    <lay-quote>
+        MySpringBootTemplate: 一个SpringBoot开发模板项目,内置了优雅的处理全局异常.
+        https://gitee.com/ahviplc/MySpringBootTemplate
+    </lay-quote>
+    <lay-line>🌲 🌲 🌲 🌲</lay-line>
+    <lay-header>
+        <lay-logo>{{diy_message}}</lay-logo>
+    </lay-header>
+    <lay-line>🌲 🌲 🌲 🌲</lay-line>
+    <lay-quote>{{diy_message}}</lay-quote>
+    <lay-line>🌲 🌲 🌲 🌲</lay-line>
+    <lay-button @click="openLayer">Hello</lay-button>
+    <lay-line>🌲 🌲 🌲 🌲</lay-line>
+    <h1>{{diy_count}}</h1>
+    <lay-button @click="countPlus">+</lay-button>
+    <lay-button @click="countSub">-</lay-button>
+    <lay-line>🌲 🌲 🌲 🌲</lay-line>
+</div>
+</body>
+<script>
+    const {createApp, ref} = Vue;
+    const {layer} = LayuiVue;
+
+    const diy_message = ref("你好 vue3 你好 layui-vue")
+
+    const diy_count = ref(0)
+
+    const App = {
+        setup() {
+
+            const openLayer = function () {
+                layer.msg("hello");
+            }
+
+            const countPlus = function () {
+                // console.log(diy_count.value)
+                diy_count.value++
+            }
+
+            const countSub = function () {
+                diy_count.value--
+            }
+
+            return {
+                openLayer,
+                countPlus,
+                countSub,
+                diy_message,
+                diy_count
+            }
+        }
+    };
+
+    // 创建 app 并使用 LayuiVue
+    const app = createApp(App);
+    app.use(LayuiVue);
+    app.mount('#app');
+</script>
+
+</html>

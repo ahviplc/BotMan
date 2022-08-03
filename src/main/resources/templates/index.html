@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>Just Show Your Machine Info</title>
+</head>
+<!-- 一些cdn引入 -->
+
+<!-- vue2 -->
+<!-- https://unpkg.com/vue@2.6.14/dist/vue.js -->
+<!-- https://unpkg.com/vue@2.6.14/dist/vue.min.js -->
+<script src="https://unpkg.com/vue@2.6.14/dist/vue.min.js"></script>
+
+<!-- axios -->
+<!--https://unpkg.com/axios@0.27.2/dist/axios.min.js-->
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+<body>
+
+<div id="app">
+    <div>
+        Hi,{{who_am_i}} => {{title}}
+    </div>
+    <P>================================================</P>
+    <div>
+        {{dataObj}}
+    </div>
+</div>
+
+<script>
+    var vm = new Vue({
+        el: '#app',
+        data: {
+            title: '',
+            who_am_i: '',
+            dataObj: ''
+        },
+        created() {
+            console.log('...created 这里去请求api接口...')
+            this.getEnvApi()
+            this.getAllApi()
+        },
+        beforeMount() {
+            console.log('...beforeMount...')
+        },
+        mounted() {
+            console.log('...mounted...')
+        },
+        methods: {
+            getPingApi() { // 获取ping测试api
+                axios.get('/api/ping').then(result => {
+                    /*    var result = result.data()*/
+                    console.log(result.data)
+                })
+            },
+            getEnvApi() { // 获取ping测试api
+                axios.get('/api/env').then(result => {
+                    /*    var result = result.data()*/
+                    console.log(result.data)
+                    this.title = result.data.result.APP_NAME
+                    this.who_am_i = result.data.result.WHO_AM_I
+                })
+            },
+            getAllApi() { // 获取机器信息api
+                axios.get('/api/all').then(result => {
+                    console.log(result.data)
+                    this.dataObj = result.data.result
+                })
+            },
+            // 其他方法
+        },
+
+    });
+</script>
+
+</body>
+</html>

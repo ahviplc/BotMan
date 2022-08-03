@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>Just Show Your Machine Status</title>
+</head>
+<!-- 一些cdn引入 -->
+
+<!-- vue2 -->
+<!-- https://unpkg.com/vue@2.6.14/dist/vue.js -->
+<!-- https://unpkg.com/vue@2.6.14/dist/vue.min.js -->
+<script src="https://unpkg.com/vue@2.6.14/dist/vue.min.js"></script>
+
+<!-- axios -->
+<!--https://unpkg.com/axios@0.27.2/dist/axios.min.js-->
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+<!-- CDN  目前可以通过 unpkg.com/element-ui 获取到最新版本的资源，在页面上引入 js 和 css 文件即可开始使用 -->
+<!-- 引入样式 -->
+<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+<!-- 引入组件库 -->
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/decimal.js/10.3.1/decimal.min.js"
+        integrity="sha512-Ou4M+sSU8oa+mE3juYqR3JmW633MUpMhe1cd+IusOtfjkMo8I3zXs4fRmjmCFqpRg5RK/geqoXBY8XRwFY2Rsg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<body>
+
+<div id="app">
+    <div>
+        <el-container>
+            <el-aside width="200px">
+                你的专属服务器监控
+            </el-aside>
+            <el-container>
+                <el-header> Hi,{{who_am_i}} => {{title}}</el-header>
+
+                <el-tag effect="dark">
+                    Your OS => {{dataObj.os}}
+                </el-tag>
+
+                <el-main>
+
+                    <el-row :gutter="200">
+
+                        <el-col :span="6">
+                            <el-card class="box-card">
+                                <div slot="header" class="clearfix">
+                                    <el-popover
+                                            placement="top-start"
+                                            title="cpu信息"
+                                            width="200"
+                                            trigger="hover"
+                                            :content="cpu_desc">
+                                        <el-button slot="reference">CPU(可触碰我)</el-button>
+                                    </el-popover>
+                                    <!--<el-button style="float: right; padding: 3px 0" type="text">操作按钮</el-button>-->
+                                </div>
+                                <div class="text item">
+                                    <el-divider content-position="left">CPU利用率</el-divider>
+                                    <el-progress type="circle" :percentage="cpu_used_percent"></el-progress>
+
+                                    <el-divider content-position="left">CPU当前空闲率</el-divider>
+                                    <el-progress :text-inside="true" :stroke-width="26"
+                                                 :percentage="cpu_free_percent"></el-progress>
+                                </div>
+                            </el-card>
+                        </el-col>
+
+                        <el-col :span="6">
+                            <el-card class="box-card">
+                                <div slot="header" class="clearfix">
+                                    <el-popover
+                                            placement="top-start"
+                                            title="内存mem信息"
+                                            width="200"
+                                            trigger="hover"
+                                            :content="mem_desc">
+                                        <el-button slot="reference">内存(可触碰我)</el-button>
+                                    </el-popover>
+                                    <!--<el-button style="float: right; padding: 3px 0" type="text">操作按钮</el-button>-->
+                                </div>
+                                <div class="text item">
+                                    <el-divider content-position="left">内存利用率</el-divider>
+                                    <el-progress type="circle" :percentage="mem_used_percent"></el-progress>
+
+                                    <el-divider content-position="left">内存当前空闲率</el-divider>
+                                    <el-progress :text-inside="true" :stroke-width="26"
+                                                 :percentage="mem_free_percent"></el-progress>
+                                </div>
+                            </el-card>
+                        </el-col>
+
+                    </el-row>
+
+                </el-main>
+                <el-footer>Make With ❤ By LC
+                    <i class="el-icon-ice-tea"><a href="https://gitee.com/ahviplc/MySpringBootTemplate" target="_blank">Gitee</a></i>
+                </el-footer>
+            </el-container>
+        </el-container>
+    </div>
+</div>
+
+<script>
+    var vm = new Vue({
+        el: '#app',
+        data: {
+            timer: null, // 初始定时器变量名为null
+            title: '', // app name
+            who_am_i: '', // 你是谁
+            dataObj: '', // 总信息
+            cpu_desc: '', // CPU信息描述
+            cpu_used_percent: 0, // CPU利用率
+            cpu_free_percent: 0, // CPU当前空闲率
+            mem_desc: '', // mem信息描述
+            mem_used_percent: 0, // mem利用率
+            mem_free_percent: 0 // mem当前空闲率
+        },
+        created() {
+            console.log('...created 这里去请求api接口...')
+            this.getEnvApi()
+            this.getAllApi()
+        },
+        beforeMount() {
+            console.log('...beforeMount...')
+        },
+        mounted() {
+            console.log('...mounted...')
+            if (this.timer) {
+                clearInterval(this.timer);
+            } else {
+                this.timer = setInterval(this.getAllApi, 1000);
+            }
+        },
+        beforeDestroy() {
+            console.log('...beforeDestroy...')
+            // 清除定时器
+            clearInterval(this.timer);
+        },
+        methods: {
+            getEnvApi() { // 获取ping测试api
+                axios.get('/api/env').then(result => {
+                    /*    var result = result.data()*/
+                    console.log(result.data)
+                    this.title = result.data.result.APP_NAME
+                    this.who_am_i = result.data.result.WHO_AM_I
+                })
+            },
+            getAllApi() { // 获取机器信息api
+                axios.get('/api/all').then(result => {
+                    console.log(result.data)
+                    // all
+                    this.dataObj = result.data.result
+                    // cpu
+                    this.cpu_desc = result.data.result.cpu_desc
+                    // this.cpu_free_percent = Number.parseFloat(result.data.result.cpu.free)
+                    // Decimal 来自引入的 decimal.js
+                    this.cpu_free_percent = Decimal(result.data.result.cpu.free)
+                    // 100 - free = used
+                    this.cpu_used_percent = Decimal(100).sub(Decimal(this.cpu_free_percent))
+                    // mem
+                    this.mem_desc = result.data.result.mem
+                    // 可用的 available
+                    // 总的 total
+                    // 可用率 = 可用的 available / 总的 total
+                    // 结果 保留4位小数 四舍五入
+                    // console.log(result.data.result.mem.available)
+                    // console.log(result.data.result.mem.total)
+                    this.mem_free_percent = Decimal(result.data.result.mem.available).div(Decimal(result.data.result.mem.total)).toFixed(4, Decimal.ROUND_HALF_UP)
+                    // 结果再乘以100 变成 x.yz % 比如 1/4 = 0.2500 = 25.00% 然后显示 25.00即可
+                    this.mem_free_percent = Decimal(this.mem_free_percent).mul(Decimal(100))
+                    // 100 - free = used
+                    this.mem_used_percent = Decimal(100).sub(Decimal(this.mem_free_percent))
+                })
+            },
+            // 其他方法
+        },
+
+    });
+</script>
+
+<style>
+    /* 布局容器 css*/
+    .el-header, .el-footer {
+        background-color: #B3C0D1;
+        color: #333;
+        text-align: center;
+        line-height: 60px;
+    }
+
+    .el-aside {
+        background-color: #D3DCE6;
+        color: #333;
+        text-align: center;
+        line-height: 200px;
+    }
+
+    .el-main {
+        background-color: #E9EEF3;
+        color: #333;
+        text-align: center;
+        line-height: 160px;
+    }
+
+    body > .el-container {
+        margin-bottom: 40px;
+    }
+
+    .el-container:nth-child(5) .el-aside,
+    .el-container:nth-child(6) .el-aside {
+        line-height: 260px;
+    }
+
+    .el-container:nth-child(7) .el-aside {
+        line-height: 320px;
+    }
+
+    /* 卡片 css*/
+    .text {
+        font-size: 14px;
+    }
+
+    .item {
+        margin-bottom: 18px;
+    }
+
+    .clearfix:before,
+    .clearfix:after {
+        display: table;
+        content: "";
+    }
+
+    .clearfix:after {
+        clear: both
+    }
+
+    .box-card {
+        width: 480px;
+    }
+
+    /* 分栏间隔 css*/
+    .el-row {
+        margin-bottom: 20px;
+    }
+
+    .el-col-6 {
+        width: 28%;
+    }
+
+    .el-col {
+        border-radius: 4px;
+    }
+
+    .bg-purple-dark {
+        background: #99a9bf;
+    }
+
+    .bg-purple {
+        background: #d3dce6;
+    }
+
+    .bg-purple-light {
+        background: #e5e9f2;
+    }
+
+    .grid-content {
+        border-radius: 4px;
+        min-height: 36px;
+    }
+
+    .row-bg {
+        padding: 10px 0;
+        background-color: #f9fafc;
+    }
+</style>
+
+</body>
+</html>

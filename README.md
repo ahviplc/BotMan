@@ -439,7 +439,7 @@ http://localhost:9528/api/env
 {
   "userId": "ahviplc",
   "token": 112233,
-  "msgType": "text",
+  "msgType": "text|markdown",
   "msgContents": "我来自【http://192.168.0.16:9528/api/bm】接口"
 }
 ```

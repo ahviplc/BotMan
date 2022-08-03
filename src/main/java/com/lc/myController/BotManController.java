@@ -34,7 +34,7 @@ public class BotManController {
 	SocketIOServer thisSocketIOServer;
 
 	/**
-	 * socketIOServer
+	 * SocketHandler
 	 */
 	@Autowired
 	SocketHandler thisSocketHandler;
@@ -48,6 +48,7 @@ public class BotManController {
 	 * {
 	 * "userId": "ahviplc",
 	 * "token": 112233,
+	 * "msgType": "text",
 	 * "msgContents": "我来自【http://192.168.0.16:9528/api/bm】接口"
 	 * }
 	 * -------------------请求数据模板--------------------
@@ -81,7 +82,7 @@ public class BotManController {
 		}
 
 		// 到这里 就是不在线 直接缓存起来 等它上线补发即可
-		// todo
+		// todo 写入缓存或者持久化表
 
 		return ResultBody.success("BotMan Push Later When You are Online");
 	}

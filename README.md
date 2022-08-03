@@ -34,7 +34,7 @@ https://hub.docker.com/repository/docker/ahviplc/getyourmachineinfo
 
 ```shell
 docker run -di -p 9528:9528 \
---name myGetYourMachineInfo \
+--name myBotMan \
 -e APP_NAME='BotMan => Push Anything To Anywhere' \
 -e WHO_AM_I='LC' \
 ahviplc/botman:latest
@@ -48,7 +48,7 @@ ahviplc/botman:latest
 
 ```shell
 docker run -di -p 9528:9528 \
---name myGetYourMachineInfo \
+--name myBotMan \
 -e APP_NAME='BotMan => Push Anything To Anywhere' \
 -e WHO_AM_I='LC' \
 ahviplc/botman:v1.0.1
@@ -339,14 +339,14 @@ docker build -t botman:v1.0.1 .
 
 创建 Docker 容器(下面几个 docker run 均是从自己手动 build 的镜像来创建容器)
 
-docker run -di -p 9528:9528 --name myGetYourMachineInfo botman:v1.0.1
+docker run -di -p 9528:9528 --name myBotMan botman:v1.0.1
 
 带环境变量的执行 创建 Docker 容器 可改变默认的自定义环境变量
 
 这个端口环境变量容器弃用 端口指定 端口变更(内部端口必须是9528) 可通过 -p 9528:9528 或 -p 10001:9528
 
 docker run -di -p 9528:9528 \
---name myGetYourMachineInfo \
+--name myBotMan \
 -e APP_NAME='BotMan => Push Anything To Anywhere' \
 -e APP_PORT=9528 \
 botman:v1.0.1
@@ -354,18 +354,18 @@ botman:v1.0.1
 这个指定了 WHO_AM_I 我是谁 使用下面这个
 
 docker run -di -p 9528:9528 \
---name myGetYourMachineInfo \
+--name myBotMan \
 -e APP_NAME='BotMan => Push Anything To Anywhere' \
 -e WHO_AM_I='LC' \
 botman:v1.0.1
 
 登录守护式容器
 
-docker exec -it myGetYourMachineInfo /bin/bash
+docker exec -it myBotMan /bin/bash
 
 查看日志
 
-docker logs -f --tail=30 myGetYourMachineInfo
+docker logs -f --tail=30 myBotMan
 ```
 
 ## 发布镜像

@@ -93,13 +93,13 @@
         // 接收从服务端传来的消息 sendEvent = message
         socket.on('message', function (data) {
             output('<span class="username-msg"><font color="blue">' + getNowTime() + '&nbsp;</font>' + data + ' </span>');
-            console.log("sendEvent = message ===>", data);
+            console.log("sendEvent = message => ", data);
         });
 
         // 接收从服务端传来的消息 sendEvent = botManFromServer
         socket.on('botManFromServer', function (data) {
             output('<span class="username-msg"><font color="blue">' + getNowTime() + '&nbsp;</font>' + data + ' </span>');
-            console.log("sendEvent = botManFromServer ===>", data);
+            console.log("sendEvent = botManFromServer => ", data);
         });
 
         socket.on('disconnect', function () {

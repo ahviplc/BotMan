@@ -1,13 +1,16 @@
 package com.lc.myController;
 
+import cn.hutool.cache.impl.WeakCache;
 import cn.hutool.core.lang.Console;
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.RandomUtil;
 import cn.hutool.json.JSONUtil;
 import com.corundumstudio.socketio.SocketIOServer;
 import com.lc.myAspect.annotation.SysLog;
 import com.lc.myEntity.BotManBody;
 import com.lc.myEntity.ResultBody;
 import com.lc.myEnum.CommonEnum;
+import com.lc.mySocketIO.MyCache;
 import com.lc.mySocketIO.SocketHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -40,6 +43,12 @@ public class BotManController {
 	SocketHandler thisSocketHandler;
 
 	/**
+	 * MyCache
+	 */
+	@Autowired
+	MyCache thisMyCache;
+
+	/**
 	 * BotMan 接口,推送数据接口
 	 * <p>
 	 * // produces = "application/json;charset=utf-8"
@@ -65,12 +74,14 @@ public class BotManController {
 			return ResultBody.error(CommonEnum.BODY_NOT_MATCH);
 		}
 
-		Console.log(" BotManBody => {}", JSONUtil.toJsonStr(thisBotManBody));
+		Console.log(" 请求体 BotManBody => {}", JSONUtil.toJsonStr(thisBotManBody));
 
 		// 判断此用户是否已经在线
 		// 如果为true 就是在线 直接下发下去
 		Map<String, UUID> thisClientMap = thisSocketHandler.getClientMap();
-		Console.log(" getClientMap => {}", JSONUtil.toJsonStr(thisClientMap));
+		Console.log(" 判断此用户是否已经在线 getClientMap => {}", JSONUtil.toJsonStr(thisClientMap));
+		Console.log(" 判断此用户是否已经在线 getClientMap size => {}", thisClientMap.size());
+		Console.log(" 判断此用户是否已经在线 getClientMap containsKey => {} 为false 代表 {} 还不在线", thisClientMap.containsKey(thisBotManBody.getUserId()), thisBotManBody.getUserId());
 
 		if (thisClientMap.size() > 0 && thisClientMap.containsKey(thisBotManBody.getUserId())) {
 			// 获取此在线用户的 sessionid
@@ -82,7 +93,10 @@ public class BotManController {
 		}
 
 		// 到这里 就是不在线 直接缓存起来 等它上线补发即可
-		// todo 写入缓存或者持久化表
+		// Done
+		WeakCache<Object, Object> weakCache = thisMyCache.createCacheManager();
+		weakCache.put(thisBotManBody.getUserId() + "#" + RandomUtil.randomString(8), JSONUtil.toJsonStr(thisBotManBody));
+		Console.log("此待发weakCache数据中 待发消息 => {}", JSONUtil.toJsonStr(weakCache));
 
 		return ResultBody.success("BotMan Push Later When You are Online");
 	}

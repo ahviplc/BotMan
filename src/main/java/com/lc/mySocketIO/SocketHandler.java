@@ -1,7 +1,9 @@
 package com.lc.mySocketIO;
 
+import cn.hutool.cache.impl.WeakCache;
 import cn.hutool.core.lang.Console;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.corundumstudio.socketio.SocketIOClient;
 import com.corundumstudio.socketio.SocketIOServer;
@@ -40,6 +42,9 @@ public class SocketHandler {
 		return this.clientMap;
 	}
 
+	@Autowired
+	MyCache thisMyCache;
+
 	/**
 	 * 获取连接的客户端ip地址
 	 *
@@ -75,7 +80,7 @@ public class SocketHandler {
 						+ socketClient.getRemoteAddress().toString() + "}");
 				// 保存
 				clientMap.put(userId, socketClient.getSessionId());
-				Console.log("保存clientMap成功 最新数据===>>>>>{}", JSONUtil.toJsonStr(clientMap));
+				Console.log("保存clientMap成功 最新数据 => {}", JSONUtil.toJsonStr(clientMap));
 				// 发送上线通知
 				// this.sendNotice(new MessageDTO(userId, null, null, MsgStatusEnum.ONLINE.getValue()));
 				this.sendNotice(userId + " 上线了 ... ");
@@ -85,6 +90,31 @@ public class SocketHandler {
 				socketIOServer.getClient(socketClient.getSessionId()).sendEvent("botManFromServer", userId + " 你真的上来了");
 				socketIOServer.getClient(socketClient.getSessionId()).sendEvent("message", userId + " 你真的上来了2");
 			}
+
+			// 看看有没有缓存的待发
+			WeakCache<Object, Object> weakCache = thisMyCache.createCacheManager();
+			if (weakCache.size() == 0) {
+				Console.log("===此待发weakCache数据中 无待发消息===");
+				return;
+			}
+			// 走到这里 代表有待发
+			Console.log("此待发weakCache数据中 {}条待发消息 开始逐步下发 开始 => {}", weakCache.size(), JSONUtil.toJsonStr(weakCache));
+			// 遍历所有的 keys
+			for (Object thisKey : weakCache.keySet()) {
+				String[] strArray = thisKey.toString().split("#");
+				String userIdFromCache = strArray[0];
+				// 发送 userId 的 待发
+				if (userIdFromCache.equalsIgnoreCase(userId)) {
+					UUID thisSessionId = clientMap.get(userIdFromCache);
+					// Console.log("此待发weakCache数据中 缓存待发 thisSessionId => {}", thisSessionId);
+					JSONObject jsonObject = JSONUtil.parseObj(weakCache.get(thisKey));
+					// 从 jsonObject 中拿出待发内容 下发下去
+					socketIOServer.getClient(thisSessionId).sendEvent("botManFromServer", userIdFromCache + " 【cache】 " + jsonObject.get("msgContents").toString());
+					// 将下发成功的 thisKey 从缓存中移除
+					weakCache.remove(thisKey);
+				}
+			}
+			Console.log("此待发weakCache数据中 {}条待发消息 开始逐步下发 完毕 => {}", weakCache.size(), JSONUtil.toJsonStr(weakCache));
 		}
 	}
 
@@ -106,16 +136,17 @@ public class SocketHandler {
 			// this.sendNotice(new MessageDTO(userId, null, null, MsgStatusEnum.OFFLINE.getValue()));
 
 			UUID thisSessionId = clientMap.get(userId);
-			Console.log("thisSessionId ===>>>>>{}", thisSessionId);
+			Console.log("thisSessionId => {}", thisSessionId);
 
 			SocketIOClient clientIsHave = socketIOServer.getClient(thisSessionId);
 			if (clientIsHave == null) {
 				Console.log("thisSessionId {} 对应的 SocketIOClient 已经 disconnect ...", thisSessionId);
 				// 移除
 				clientMap.remove(userId);
-				Console.log("thisSessionId {} 在clientMap移除成功 最新数据===>>>>>{}", thisSessionId, JSONUtil.toJsonStr(clientMap));
+				Console.log("thisSessionId {} 在clientMap移除成功 最新数据 => {}", thisSessionId, JSONUtil.toJsonStr(clientMap));
 			}
-// 此时 SocketIOClient 为空 就不可以继续下发 sendEvent 了 不可发送消息了
+
+//          此时 SocketIOClient 为空 就不可以继续下发 sendEvent 了 不可发送消息了
 //			socketIOServer.getClient(thisSessionId).sendEvent("botManFromServer", "你真的走了");
 //			socketIOServer.getClient(thisSessionId).sendEvent("message", "你真的走了");
 
@@ -147,9 +178,9 @@ public class SocketHandler {
 	 */
 	private void sendNotice(String messageData) {
 		if (messageData != null) {
-			System.out.println("======群发======");
-			System.out.println(JSONUtil.toJsonStr(clientMap));
-			System.out.println("======群发======");
+			System.out.println("======群发上线通知======");
+			Console.log("======此群发上线通知 => {}", JSONUtil.toJsonStr(clientMap));
+			System.out.println("======群发上线通知======");
 			// 全部发送
 			clientMap.forEach((key, value) -> {
 				if (value != null) {

@@ -248,6 +248,24 @@ https://blog.csdn.net/m0_60213304/article/details/124059862
 
 spring注解@Order详细使用说明-注解@Order详细使用说明 ,定义Spring容器加载Bean的顺序
 https://www.1024sky.cn/blog/article/521
+
+socket.io-client - npm - 2.5.0 -【这个适配 GitHub - mrniko/netty-socketio: Socket.IO server implemented on Java. Realtime
+java framework  https://github.com/mrniko/netty-socketio】
+https://www.npmjs.com/package/socket.io-client/v/2.5.0
+
+GitHub - socketio/socket.io-client: Realtime application framework (client)
+https://github.com/socketio/socket.io-client
+
+这个是低版本 2.5.0 也在更新中 适配 netty-socketio 这个库
+https://cdn.bootcss.com/socket.io/2.5.0/socket.io.js
+
+这个是高版本 4.5.0
+https://cdn.bootcss.com/socket.io/4.5.0/socket.io.js
+https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.0/socket.io.min.js
+https://cdn.socket.io/4.5.0/socket.io.esm.min.js
+
+netty-socketio 示例代码_北京老油条的博客-CSDN博客 - 启发了我 新增 Ping 的监听器 addConnectListener()
+https://blog.csdn.net/javacodekit/article/details/81416107
 ```
 
 # 其他说明
@@ -464,6 +482,9 @@ http://localhost:9528/api/env
 ```markdown
 首页 - BotMan => Push Anything To Anywhere
 http://localhost:9528
+
+chat - BotMan => Push Anything To Anywhere
+http://localhost:9528/chat
 
 (status 状态页 显示机器信息)
 Just Show Your Machine Status

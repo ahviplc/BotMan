@@ -16,7 +16,6 @@ public class IndexController {
 	/**
 	 * 首页 - for BotMan
 	 * bot-man
-	 * bot-man-chat
 	 * bot-man-test
 	 *
 	 * @return
@@ -24,6 +23,18 @@ public class IndexController {
 	@RequestMapping("/")
 	public String index() {
 		return "bot-man-test"; // bot-man 是vue版本 todo 待做
+	}
+
+	/**
+	 * chat - for BotMan
+	 * <p>
+	 * bot-man-chat
+	 *
+	 * @return
+	 */
+	@RequestMapping("/chat")
+	public String chat() {
+		return "bot-man-chat";
 	}
 
 	/**

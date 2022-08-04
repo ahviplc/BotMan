@@ -11,6 +11,7 @@ import com.corundumstudio.socketio.SocketIOServer;
 import com.corundumstudio.socketio.annotation.OnConnect;
 import com.corundumstudio.socketio.annotation.OnDisconnect;
 import com.corundumstudio.socketio.annotation.OnEvent;
+import com.corundumstudio.socketio.listener.PingListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -43,6 +44,18 @@ public class SocketHandler {
 
 	@Autowired
 	public SocketHandler(SocketIOServer server) {
+
+		// it can work 这里我设置 4分钟 240秒 客户端ping一下 设置时间越短 ping出错的概率就大
+		// 配置点在【application.properties:43】
+		// SocketIOServer 新增 ping 的监听器
+		server.addPingListener(new PingListener() {
+			@Override
+			public void onPing(SocketIOClient client) {
+				StaticLog.info("Ping来了 getSessionId => {}", client.getSessionId());
+				StaticLog.info("Ping来了 getUrlParams 握手数据中的参数 => {}", client.getHandshakeData().getUrlParams());
+			}
+		});
+
 		this.socketIOServer = server;
 	}
 
@@ -254,6 +267,8 @@ public class SocketHandler {
 	/**
 	 * botManFromHTML：   接收前端消息,方法名需与前端一致
 	 * botManFromServer：前端接收后端发送数据的方法，方法名需与前端一致
+	 * <p>
+	 * for | http://localhost:9528 使用的
 	 *
 	 * @param socketClient socketClient
 	 * @param thisData     前端发送的数据
@@ -274,8 +289,8 @@ public class SocketHandler {
 //		 System.out.println(socketClient.getNamespace().getName());
 //		 HandshakeData handshakeData = socketClient.getHandshakeData();
 
-		// Console.log("接收到了前端发送的消息 {} OnEvent botManFromHTML thisSessionId {}", thisData, socketClient.getSessionId());
-		StaticLog.info("接收到了前端发送的消息 {} OnEvent botManFromHTML thisSessionId {}", thisData, socketClient.getSessionId());
+		// Console.log("接收到了前端发送的消息 {} onEvent2 botManFromHTML thisSessionId {}", thisData, socketClient.getSessionId());
+		StaticLog.info("接收到了前端发送的消息 {} onEvent2 botManFromHTML thisSessionId {}", thisData, socketClient.getSessionId());
 
 		socketIOServer.getClient(socketClient.getSessionId()).sendEvent("message", "onEvent2 ---A---");
 		socketIOServer.getClient(socketClient.getSessionId()).sendEvent("botManFromServer", "onEvent2 ---B---");
@@ -283,6 +298,20 @@ public class SocketHandler {
 		socketIOServer.getClient(socketClient.getSessionId()).sendEvent("ack", "1");
 	}
 
+
+	/**
+	 * botManChatFromHTML：   接收前端消息,方法名需与前端一致
+	 * botManChatFromServer：前端接收后端发送数据的方法，方法名需与前端一致
+	 * <p>
+	 * for | http://localhost:9528/chat 使用的
+	 *
+	 * @param socketClient socketClient
+	 * @param thisData     前端发送的数据
+	 */
+	@OnEvent("botManChatFromHTML")
+	public void onEvent4(SocketIOClient socketClient, String thisData) {
+		socketIOServer.getClient(socketClient.getSessionId()).sendEvent("botManChatFromServer", thisData);
+	}
 
 	/**
 	 * botManFromHTMLToWho：   接收前端消息,方法名需与前端一致 指定一个 userId 进行发送
@@ -294,8 +323,8 @@ public class SocketHandler {
 	@OnEvent("botManFromHTMLToWho")
 	public void onEvent3(SocketIOClient socketClient, String thisData) {
 
-		// Console.log("接收到了前端发送的消息 {} OnEvent botManFromHTMLToWho thisSessionId {}", thisData, socketClient.getSessionId());
-		StaticLog.info("接收到了前端发送的消息 {} OnEvent botManFromHTMLToWho thisSessionId {}", thisData, socketClient.getSessionId());
+		// Console.log("接收到了前端发送的消息 {} onEvent3 botManFromHTMLToWho thisSessionId {}", thisData, socketClient.getSessionId());
+		StaticLog.info("接收到了前端发送的消息 {} onEvent3 botManFromHTMLToWho thisSessionId {}", thisData, socketClient.getSessionId());
 
 		// 谁发来的 类似 ahviplc
 		String userId = socketClient.getHandshakeData().getSingleUrlParam("userId");

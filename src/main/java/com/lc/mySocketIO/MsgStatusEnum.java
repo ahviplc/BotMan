@@ -1,7 +1,7 @@
 package com.lc.mySocketIO;
 
 /**
- * 消息状态
+ * 消息状态 枚举类 MsgStatusEnum
  */
 public enum MsgStatusEnum {
 	/**

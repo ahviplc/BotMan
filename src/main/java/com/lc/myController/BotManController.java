@@ -1,10 +1,10 @@
 package com.lc.myController;
 
 import cn.hutool.cache.impl.WeakCache;
-import cn.hutool.core.lang.Console;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.json.JSONUtil;
+import cn.hutool.log.StaticLog;
 import com.corundumstudio.socketio.SocketIOServer;
 import com.lc.myAspect.annotation.SysLog;
 import com.lc.myEntity.BotManBody;
@@ -74,14 +74,14 @@ public class BotManController {
 			return ResultBody.error(CommonEnum.BODY_NOT_MATCH);
 		}
 
-		Console.log(" 请求体 BotManBody => {}", JSONUtil.toJsonStr(thisBotManBody));
+		StaticLog.info("请求体 BotManBody => {}", JSONUtil.toJsonStr(thisBotManBody));
 
 		// 判断此用户是否已经在线
 		// 如果为true 就是在线 直接下发下去
 		Map<String, UUID> thisClientMap = thisSocketHandler.getClientMap();
-		Console.log(" 判断此用户是否已经在线 getClientMap => {}", JSONUtil.toJsonStr(thisClientMap));
-		Console.log(" 判断此用户是否已经在线 getClientMap size => {}", thisClientMap.size());
-		Console.log(" 判断此用户是否已经在线 getClientMap containsKey => {} 为false 代表 {} 还不在线", thisClientMap.containsKey(thisBotManBody.getUserId()), thisBotManBody.getUserId());
+		StaticLog.info("判断此用户是否已经在线 getClientMap => {}", JSONUtil.toJsonStr(thisClientMap));
+		StaticLog.info("判断此用户是否已经在线 getClientMap size => {}", thisClientMap.size());
+		StaticLog.info("判断此用户是否已经在线 getClientMap containsKey => {} 【为false】代表 {} 还不在线", thisClientMap.containsKey(thisBotManBody.getUserId()), thisBotManBody.getUserId());
 
 		if (thisClientMap.size() > 0 && thisClientMap.containsKey(thisBotManBody.getUserId())) {
 			// 获取此在线用户的 sessionid
@@ -96,7 +96,7 @@ public class BotManController {
 		// Done
 		WeakCache<Object, Object> weakCache = thisMyCache.createCacheManager();
 		weakCache.put(thisBotManBody.getUserId() + "#" + RandomUtil.randomString(8), JSONUtil.toJsonStr(thisBotManBody));
-		Console.log("此待发weakCache数据中 待发消息 => {}", JSONUtil.toJsonStr(weakCache));
+		StaticLog.info("此待发weakCache数据中 待发消息 => {}", JSONUtil.toJsonStr(weakCache));
 
 		return ResultBody.success("BotMan Push Later When You are Online");
 	}

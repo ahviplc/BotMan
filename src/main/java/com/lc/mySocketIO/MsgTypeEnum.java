@@ -1,7 +1,7 @@
 package com.lc.mySocketIO;
 
 /**
- * 消息类型
+ * 消息类型 枚举类 MsgTypeEnum
  */
 public enum MsgTypeEnum {
 	/**

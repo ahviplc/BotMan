@@ -233,6 +233,21 @@ https://blog.csdn.net/qq_42271561/article/details/107993121
 
 Offline behavior | Socket.IO
 https://socket.io/docs/v3/client-offline-behavior/
+
+@component与@Configuration创建bean_清华大咖的博客-CSDN博客
+https://blog.csdn.net/qq_39130650/article/details/123415534
+
+Spring之@Configuration、@Component、@Bean - 腾讯云开发者社区-腾讯云
+https://cloud.tencent.com/developer/article/1497451
+
+@component的作用详细介绍_weixin_38168484的博客-CSDN博客
+https://blog.csdn.net/weixin_38168484/article/details/101534255
+
+@Autowired注解的使用_便利店狗砸的博客-CSDN博客_@autowired注解
+https://blog.csdn.net/m0_60213304/article/details/124059862
+
+spring注解@Order详细使用说明-注解@Order详细使用说明 ,定义Spring容器加载Bean的顺序
+https://www.1024sky.cn/blog/article/521
 ```
 
 # 其他说明

@@ -8,8 +8,7 @@ import lombok.NoArgsConstructor;
 import java.io.Serializable;
 
 /**
- * 消息数据传输对象
- *
+ * 消息数据传输对象 MessageDTO
  */
 @Data
 @Builder

@@ -1,10 +1,10 @@
 package com.lc.mySocketIO;
 
 import cn.hutool.cache.impl.WeakCache;
-import cn.hutool.core.lang.Console;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import cn.hutool.log.StaticLog;
 import com.corundumstudio.socketio.SocketIOClient;
 import com.corundumstudio.socketio.SocketIOServer;
 import com.corundumstudio.socketio.annotation.OnConnect;
@@ -18,7 +18,14 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Socket 处理器
+ * Socket 处理器 SocketHandler 类
+ *
+ * @Component加到类路径自动扫描.
+ * @component （把普通pojo实例化到spring容器中，相当于配置文件中的 <bean id="" class=""/>）
+ * 泛指各种组件，就是说当我们的类不属于各种归类的时候（不属于@Controller、@Services等的时候），我们就可以使用@Component来标注这个类。
+ * --------------------------------------------------------------
+ * @Autowired表示一个属性是否需要进行依赖注入，可以使用在属性、普通方法上、构造方法上。注解中的required属性默认是true，如果没有对象可以注入到属性，则会报出异常；
+ * @Autowired使用在构造方法中：根据构造方法的形参、形参名，从ioc容器中找到该类型的Bean对象，注入到构造方法的形参中，并且执行该方法；
  */
 @Component
 public class SocketHandler {
@@ -72,15 +79,15 @@ public class SocketHandler {
 		// System.out.println(getIpByClient(socketClient));
 
 		if (StrUtil.isNotBlank(userId)) {
-			// TODO
+			// TODO 这里其实就是需要查库或者什么操作 确定用户的真实性 这里不做处理
 			// userService.queryUserById(userId) != null
 			if (true) {
-				System.out.println("用户{" + userId + "}开启长连接通知, NettySocketSessionId: {"
-						+ socketClient.getSessionId().toString() + "},NettySocketRemoteAddress: {"
-						+ socketClient.getRemoteAddress().toString() + "}");
+				// System.out.println("用户{" + userId + "}开启长连接通知, NettySocketSessionId: {" + socketClient.getSessionId().toString() + "},NettySocketRemoteAddress: {" + socketClient.getRemoteAddress().toString() + "}");
+				StaticLog.info("用户 {} 开启长连接通知, NettySocketSessionId: {}, NettySocketRemoteAddress: {}", userId, socketClient.getSessionId().toString(), socketClient.getRemoteAddress().toString());
 				// 保存
 				clientMap.put(userId, socketClient.getSessionId());
-				Console.log("保存clientMap成功 最新数据 => {}", JSONUtil.toJsonStr(clientMap));
+				// Console.log("用户 {} 上线了 保存到 clientMap 成功 最新数据 => {}",userId, JSONUtil.toJsonStr(clientMap));
+				StaticLog.info("用户 {} 上线了 保存到 clientMap 成功 最新数据 => {}", userId, JSONUtil.toJsonStr(clientMap));
 				// 发送上线通知
 				// this.sendNotice(new MessageDTO(userId, null, null, MsgStatusEnum.ONLINE.getValue()));
 				this.sendNotice(userId + " 上线了 ... ");
@@ -94,11 +101,13 @@ public class SocketHandler {
 			// 看看有没有缓存的待发
 			WeakCache<Object, Object> weakCache = thisMyCache.createCacheManager();
 			if (weakCache.size() == 0) {
-				Console.log("===此待发weakCache数据中 无待发消息===");
+				// Console.log("===此待发weakCache数据中 无待发消息===");
+				StaticLog.info("===此待发weakCache数据中 无待发消息===");
 				return;
 			}
 			// 走到这里 代表有待发
-			Console.log("此待发weakCache数据中 {}条待发消息 开始逐步下发 开始 => {}", weakCache.size(), JSONUtil.toJsonStr(weakCache));
+			// Console.log("===此待发weakCache数据中 {}条待发消息 开始逐步下发 开始 => {}", weakCache.size(), JSONUtil.toJsonStr(weakCache));
+			StaticLog.info("===此待发weakCache数据中 {} 条待发消息 开始逐步下发 开始 => {}", weakCache.size(), JSONUtil.toJsonStr(weakCache));
 			// 遍历所有的 keys
 			for (Object thisKey : weakCache.keySet()) {
 				String[] strArray = thisKey.toString().split("#");
@@ -114,7 +123,8 @@ public class SocketHandler {
 					weakCache.remove(thisKey);
 				}
 			}
-			Console.log("此待发weakCache数据中 {}条待发消息 开始逐步下发 完毕 => {}", weakCache.size(), JSONUtil.toJsonStr(weakCache));
+			// Console.log("此待发weakCache数据中 {}条待发消息 开始逐步下发 完毕 => {}", weakCache.size(), JSONUtil.toJsonStr(weakCache));
+			StaticLog.info("===此待发weakCache数据中 {} 条待发消息 开始逐步下发 完毕 => {}", weakCache.size(), JSONUtil.toJsonStr(weakCache));
 		}
 	}
 
@@ -128,22 +138,24 @@ public class SocketHandler {
 	public void onDisConnect(SocketIOClient socketClient) {
 		String userId = socketClient.getHandshakeData().getSingleUrlParam("userId");
 		if (StrUtil.isNotBlank(userId)) {
-			System.out.println("用户{" + userId + "}断开长连接通知, NettySocketSessionId: {"
-					+ socketClient.getSessionId().toString() + "},NettySocketRemoteAddress: {"
-					+ socketClient.getRemoteAddress().toString() + "}");
+			// System.out.println("用户{" + userId + "}断开长连接通知, NettySocketSessionId: {" + socketClient.getSessionId().toString() + "},NettySocketRemoteAddress: {" + socketClient.getRemoteAddress().toString() + "}");
+			StaticLog.info("用户 {} 断开长连接通知, NettySocketSessionId: {}, NettySocketRemoteAddress: {}", userId, socketClient.getSessionId().toString(), socketClient.getRemoteAddress().toString());
 
 			// 发送下线通知
 			// this.sendNotice(new MessageDTO(userId, null, null, MsgStatusEnum.OFFLINE.getValue()));
 
 			UUID thisSessionId = clientMap.get(userId);
-			Console.log("thisSessionId => {}", thisSessionId);
+			// Console.log("用户 {} 下线了 此要移除的 thisSessionId => {}", thisSessionId);
+			StaticLog.info("用户 {} 下线了 此要移除的 thisSessionId => {}", userId, thisSessionId);
 
 			SocketIOClient clientIsHave = socketIOServer.getClient(thisSessionId);
 			if (clientIsHave == null) {
-				Console.log("thisSessionId {} 对应的 SocketIOClient 已经 disconnect ...", thisSessionId);
+				// Console.log("用户 {} 下线了 此要移除的 thisSessionId {} 对应的 SocketIOClient 已经 disconnect ...", userId, thisSessionId);
+				StaticLog.info("用户 {} 下线了 此要移除的 thisSessionId {} 对应的 SocketIOClient 已经 disconnect ...", userId, thisSessionId);
 				// 移除
 				clientMap.remove(userId);
-				Console.log("thisSessionId {} 在clientMap移除成功 最新数据 => {}", thisSessionId, JSONUtil.toJsonStr(clientMap));
+				// Console.log("用户 {} 下线了 此要移除的 thisSessionId {} 在clientMap移除成功 最新数据 => {}", userId, thisSessionId, JSONUtil.toJsonStr(clientMap));
+				StaticLog.info("用户 {} 下线了 此要移除的 thisSessionId {} 在clientMap移除成功 最新数据 => {}", userId, thisSessionId, JSONUtil.toJsonStr(clientMap));
 			}
 
 //          此时 SocketIOClient 为空 就不可以继续下发 sendEvent 了 不可发送消息了
@@ -164,7 +176,7 @@ public class SocketHandler {
 			// 全部发送
 			clientMap.forEach((key, value) -> {
 				if (value != null) {
-					socketIOServer.getClient(value).sendEvent("receiveMsg", messageDTO);
+					socketIOServer.getClient(value).sendEvent("receiveMsg", messageDTO); // receiveMsg 此发送事件在前端还未定义
 				}
 			});
 		}
@@ -178,9 +190,9 @@ public class SocketHandler {
 	 */
 	private void sendNotice(String messageData) {
 		if (messageData != null) {
-			System.out.println("======群发上线通知======");
-			Console.log("======此群发上线通知 => {}", JSONUtil.toJsonStr(clientMap));
-			System.out.println("======群发上线通知======");
+			StaticLog.info("===群发上线通知===");
+			StaticLog.info("===此群发上线通知 => {}", JSONUtil.toJsonStr(clientMap));
+			StaticLog.info("===群发上线通知===");
 			// 全部发送
 			clientMap.forEach((key, value) -> {
 				if (value != null) {
@@ -191,14 +203,16 @@ public class SocketHandler {
 	}
 
 	/**
-	 * 往 receiveMsg 发的话 简单的string字符串 不可逆向为 MessageDTO 会报错
-	 * sendMsg：   接收前端消息,方法名需与前端一致
+	 * 前端往后端 receiveMsg2 发的话 简单的string字符串 不可逆向为 MessageDTO 会报错
+	 * 后端向前端 通过 receiveMsg 发送事件 发送消息
+	 * <p>
+	 * receiveMsg2：   接收前端消息,方法名需与前端一致
 	 * receiveMsg：前端接收后端发送数据的方法，方法名需与前端一致
 	 *
 	 * @param socketClient socketClient
 	 * @param messageDTO   messageDTO
 	 */
-	@OnEvent("receiveMsg")
+	@OnEvent("receiveMsg2")
 	// sendMsg
 	public void onEvent(SocketIOClient socketClient, MessageDTO messageDTO) {
 
@@ -224,7 +238,8 @@ public class SocketHandler {
 			} else if (msgType.equals(MsgTypeEnum.COMMENT.getValue())) {
 				socketIOServer.getClient(sessionId).sendEvent("receiveMsg", "你有一条评论消息");
 			} else {
-				System.out.println("消息类型不匹配");
+				// System.out.println("消息类型不匹配");
+				StaticLog.info("onEvent 消息类型不匹配");
 			}
 		}
 	}
@@ -253,7 +268,9 @@ public class SocketHandler {
 //		 System.out.println(socketClient.getNamespace().getName());
 //		 HandshakeData handshakeData = socketClient.getHandshakeData();
 
-		Console.log("接收到了前端发送的消息 {} OnEvent botManFromHTML thisSessionId {}", thisData, socketClient.getSessionId());
+		// Console.log("接收到了前端发送的消息 {} OnEvent botManFromHTML thisSessionId {}", thisData, socketClient.getSessionId());
+		StaticLog.info("接收到了前端发送的消息 {} OnEvent botManFromHTML thisSessionId {}", thisData, socketClient.getSessionId());
+
 		socketIOServer.getClient(socketClient.getSessionId()).sendEvent("message", "onEvent2 ---A---");
 		socketIOServer.getClient(socketClient.getSessionId()).sendEvent("botManFromServer", "onEvent2 ---B---");
 		// 消息发送成功 或 失败 data 为 1 是成功 其他为失败
@@ -271,7 +288,8 @@ public class SocketHandler {
 	@OnEvent("botManFromHTMLToWho")
 	public void onEvent3(SocketIOClient socketClient, String thisData) {
 
-		Console.log("接收到了前端发送的消息 {} OnEvent botManFromHTMLToWho thisSessionId {}", thisData, socketClient.getSessionId());
+		// Console.log("接收到了前端发送的消息 {} OnEvent botManFromHTMLToWho thisSessionId {}", thisData, socketClient.getSessionId());
+		StaticLog.info("接收到了前端发送的消息 {} OnEvent botManFromHTMLToWho thisSessionId {}", thisData, socketClient.getSessionId());
 
 		// 谁发来的 类似 ahviplc
 		String userId = socketClient.getHandshakeData().getSingleUrlParam("userId");

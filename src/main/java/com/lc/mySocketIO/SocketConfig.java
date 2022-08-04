@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Configuration;
 import java.util.List;
 
 /**
- * Socket配置
+ * Socket配置类 SocketConfig
  */
 @Configuration
 public class SocketConfig {

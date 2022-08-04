@@ -477,6 +477,12 @@ http://localhost:9528/api/env
 }
 ```
 
+`请求成功 即可在下面页面看到推送的消息 处于上线状态 即时可以看到 | 离线状态 connect 之后即可看到`
+
+> http://localhost:9528
+
+`注意: 请求接口中的 userId 要和 页面登录的 userId 保持一致`
+
 # 一些前端展示页面总览
 
 ```markdown

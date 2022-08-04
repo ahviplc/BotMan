@@ -53,6 +53,7 @@
     <label>content:</label><br><textarea id="content" maxlength="1000" cols="30" rows="5">hello world...</textarea>
     <br>
     <button id="send">send</button>
+    <button id="sendWithObj">sendWithObj</button>
 </div>
 <br>
 <div id="console" class="well"></div>
@@ -101,6 +102,33 @@
         socket.on('botManFromServer', function (data) {
             output('<span class="username-msg"><font color="blue">' + getNowTime() + '&nbsp;</font>' + data + ' </span>');
             console.log("sendEvent = botManFromServer => ", data);
+        });
+
+        // 接收从服务端传来的消息 sendEvent = botManFromServerWithObj 结构体消息数据
+        socket.on('botManFromServerWithObj', function (data) {
+            output('<span class="username-msg"><font color="blue">' + getNowTime() + '&nbsp;</font>' + data.msgContent + ' </span>');
+            console.log("sendEvent = botManFromServerWithObj => ", data);
+        });
+
+        // 接收从服务端传来的消息 sendEvent = onEventMsgSendStatusToHTML 结构体消息数据
+        socket.on('onEventMsgSendStatusToHTML', function (data) {
+            // 如果消息类型为空 则设置为 RealTimeMessage 当实时消息处理
+            if (data.msgType == null) {
+                data.msgType = 'RealTimeMessage'
+            }
+
+            // 共同逻辑
+            output('<span class="username-msg"><font color="blue">' + getNowTime() + '&nbsp;</font>' + data.msgContent + ' </span>');
+            console.log("sendEvent = onEventMsgSendStatusToHTML => ", data);
+
+            // 如果这是缓存消息
+            // 则会对应下发一个消息抵达响应 去为了真正的删除 缓存在内存中的消息 这样也可以保证 缓存消息不丢失
+            if (data.msgType == 'CachedMessage') { // 缓存消息
+                // 监听缓存消息的发送状态的消息事件 onEventMsgSendStatus
+                // data.beOperatedId 存放的是 缓存中的 key
+                // 直接原数据返回即可 后台可通过 data.beOperatedId 在缓存中 将其删除
+                socket.emit('onEventMsgSendStatus', data);
+            }
         });
 
         socket.on('disconnect', function () {
@@ -173,18 +201,57 @@
     $("#send").click(function () {
         var socketEvent = $("#socketEvent").val();
         var content = $("#content").val();
-        serverOutput('<span class="connect-msg"><font color="blue">' + getNowTime() + '&nbsp;</font>' + '发送消息-' + content + ' </span>');
 
         //  socket.emit(socketEvent, content);
 
-        // 升级写法 考虑到离线情况
-        if (socket.connected) {
-            socket.emit(socketEvent, content);
-        } else {
-            console.log("离线了 不可以发送了 socket.connected => ", socket.connected)
-            serverOutput('<span class="connect-msg"><font color="red">' + getNowTime() + '&nbsp;</font>' + '离线了 不可以发送了' + ' </span>');
+        try {
+            // 升级写法 考虑到离线情况
+            if (socket.connected) {
+                socket.emit(socketEvent, content);
+                serverOutput('<span class="connect-msg"><font color="blue">' + getNowTime() + '&nbsp;</font>' + 'send | 发送消息-> ' + content + ' </span>');
+            } else {
+                console.log("离线了 不可以发送了 socket.connected => ", socket.connected)
+                serverOutput('<span class="connect-msg"><font color="red">' + getNowTime() + '&nbsp;</font>' + '离线了 不可以发送了' + ' </span>');
+            }
+        } catch (err) {
+            if (err.message = "Cannot read properties of undefined (reading 'connected')") {
+                alert('请先connect 再点我')
+            } else {
+                alert(err.message);
+            }
+        }
+    })
+
+    // 发送带有结构体的消息数据
+    // 后端接收socket事件 botManFromHTMLWithObj
+    $("#sendWithObj").click(function () {
+        var socketEvent = 'botManFromHTMLWithObj';
+        var userId = $("#userId").val();
+        var content = $("#content").val();
+
+        // 拼接消息结构体
+        let thisObj = {
+            userId: userId,
+            msgContent: content,
+            msgType: 'RealTimeMessage'
         }
 
+        try {
+            // 升级写法 考虑到离线情况
+            if (socket.connected) {
+                socket.emit(socketEvent, thisObj);
+                serverOutput('<span class="connect-msg"><font color="blue">' + getNowTime() + '&nbsp;</font>' + 'sendWithObj | 发送消息-> ' + content + ' </span>');
+            } else {
+                console.log("离线了 不可以发送了 socket.connected => ", socket.connected)
+                serverOutput('<span class="connect-msg"><font color="red">' + getNowTime() + '&nbsp;</font>' + '离线了 不可以发送了' + ' </span>');
+            }
+        } catch (err) {
+            if (err.message = "Cannot read properties of undefined (reading 'connected')") {
+                alert('请先connect 再点我')
+            } else {
+                alert(err.message);
+            }
+        }
     })
 
     function getNowTime() {

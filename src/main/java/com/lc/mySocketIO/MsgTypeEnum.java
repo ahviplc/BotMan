@@ -17,7 +17,17 @@ public enum MsgTypeEnum {
 	/**
 	 * 评论
 	 */
-	COMMENT("comment");
+	COMMENT("comment"),
+
+	/**
+	 * 实时消息
+	 */
+	RealTimeMessage("RealTimeMessage"),
+
+	/**
+	 * 缓存消息
+	 */
+	CachedMessage("CachedMessage");
 
 	private String value;
 

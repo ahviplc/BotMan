@@ -135,9 +135,10 @@ public class SocketHandler {
 					// Console.log("此待发weakCache数据中 缓存待发 thisSessionId => {}", thisSessionId);
 					JSONObject jsonObject = JSONUtil.parseObj(weakCache.get(thisKey));
 					// 从 jsonObject 中拿出待发内容 下发下去
-					socketIOServer.getClient(thisSessionId).sendEvent("botManFromServer", userIdFromCache + " 【cache】 " + jsonObject.get("msgContents").toString());
-					// 将下发成功的 thisKey 从缓存中移除
-					weakCache.remove(thisKey);
+					// 从前端socket事件 onEventMsgSendStatusToHTML 下发 | 结构体消息数据
+					socketIOServer.getClient(thisSessionId).sendEvent("onEventMsgSendStatusToHTML", MyIOUtils.All(userId, "", thisKey.toString(), MsgTypeEnum.CachedMessage.getValue(), userIdFromCache + " 【cache】 " + jsonObject.get("msgContents").toString()));
+
+					// 将下发成功的 thisKey 从缓存中移除 这部分逻辑放在了 下面的 socket事件 onEventMsgSendStatus 中了
 				}
 				// 每次睡眠 500 毫秒
 				ThreadUtil.safeSleep(500);
@@ -289,8 +290,8 @@ public class SocketHandler {
 //		 System.out.println(socketClient.getNamespace().getName());
 //		 HandshakeData handshakeData = socketClient.getHandshakeData();
 
-		// Console.log("接收到了前端发送的消息 {} onEvent2 botManFromHTML thisSessionId {}", thisData, socketClient.getSessionId());
-		StaticLog.info("接收到了前端发送的消息 {} onEvent2 botManFromHTML thisSessionId {}", thisData, socketClient.getSessionId());
+		// Console.log("接收到了前端发送的消息【{}】onEvent2 botManFromHTML thisSessionId {}", thisData, socketClient.getSessionId());
+		StaticLog.info("接收到了前端发送的消息【{}】onEvent2 botManFromHTML thisSessionId {}", thisData, socketClient.getSessionId());
 
 		socketIOServer.getClient(socketClient.getSessionId()).sendEvent("message", "onEvent2 ---A---");
 		socketIOServer.getClient(socketClient.getSessionId()).sendEvent("botManFromServer", "onEvent2 ---B---");
@@ -298,6 +299,60 @@ public class SocketHandler {
 		socketIOServer.getClient(socketClient.getSessionId()).sendEvent("ack", "1");
 	}
 
+	/**
+	 * 监听缓存消息的发送状态的消息事件 onEventMsgSendStatus | 接收带有结构体的消息数据 结构体消息数据
+	 * <p>
+	 * onEventMsgSendStatus：接收前端消息,方法名需与前端一致
+	 * onEventMsgSendStatusToHTML：前端接收后端发送数据的方法，方法名需与前端一致
+	 * <p>
+	 * for | http://localhost:9528 使用的
+	 *
+	 * @param socketClient   socketClient
+	 * @param thisMessageDTO 前端发送的数据 obj
+	 */
+	@OnEvent("onEventMsgSendStatus")
+	public void onEventMsgSendStatus(SocketIOClient socketClient, MessageDTO thisMessageDTO) {
+		StaticLog.info("接收到了前端发送的消息 原数据再次回到后端服务器 为了用此key请求缓存中的数据【{}】onEventMsgSendStatus onEventMsgSendStatus | thisSessionId => {}", thisMessageDTO, socketClient.getSessionId());
+
+		// 看看此缓存的待发
+		// 创建弱引用缓存
+		// WeakCache<Object, Object> weakCache = thisMyCache.createWeakCacheManager();
+		// 创建FIFO(first in first out) 先进先出缓存
+		FIFOCache<Object, Object> weakCache = thisMyCache.createFIFOCacheManager();
+		if (weakCache.size() == 0) {
+			// Console.log("===此待发weakCache数据中 无待发消息===");
+			StaticLog.info("===此待发weakCache数据中 无待发消息 无可以清除的缓存消息了===");
+			return;
+		}
+
+		// 走到这里 代表还有缓存消息
+		// 将此key从thisMessageDTO取出
+		String thisKeyForRemove = thisMessageDTO.getBeOperatedId();
+		if (weakCache.containsKey(thisKeyForRemove)) { // 看缓存中 此key有没有 有的话 remove
+			// 将下发成功的 thisKey 从缓存中移除
+			weakCache.remove(thisKeyForRemove);
+			// 结构体消息数据 下发
+			socketIOServer.getClient(socketClient.getSessionId()).sendEvent("onEventMsgSendStatusToHTML", MyIOUtils.RealTimeMessage(" 缓存消息已清除实时通知 此key为 => " + thisMessageDTO.getBeOperatedId()));
+		}
+	}
+
+	/**
+	 * botManFromHTMLWithObj | 接收带有结构体的消息数据 结构体消息数据
+	 * <p>
+	 * botManFromHTMLWithObj：接收前端消息,方法名需与前端一致
+	 * botManFromServerWithObj：前端接收后端发送数据的方法，方法名需与前端一致
+	 * <p>
+	 * for | http://localhost:9528 使用的
+	 *
+	 * @param socketClient   socketClient
+	 * @param thisMessageDTO 前端发送的数据 obj
+	 */
+	@OnEvent("botManFromHTMLWithObj")
+	public void onEventWithObj(SocketIOClient socketClient, MessageDTO thisMessageDTO) {
+		StaticLog.info("接收到了前端发送的消息【{}】onEventWithObj botManFromHTMLWithObj | thisSessionId => {}", thisMessageDTO, socketClient.getSessionId());
+		// 结构体消息数据 下发
+		socketIOServer.getClient(socketClient.getSessionId()).sendEvent("botManFromServerWithObj", MyIOUtils.RealTimeMessage("我是Obj实时消息 => " + thisMessageDTO.getMsgContent()));
+	}
 
 	/**
 	 * botManChatFromHTML：   接收前端消息,方法名需与前端一致

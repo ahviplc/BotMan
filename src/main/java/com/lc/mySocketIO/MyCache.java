@@ -1,6 +1,7 @@
 package com.lc.mySocketIO;
 
 import cn.hutool.cache.CacheUtil;
+import cn.hutool.cache.impl.FIFOCache;
 import cn.hutool.cache.impl.WeakCache;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,11 +15,21 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class MyCache {
 
+	// 创建弱引用缓存
 	WeakCache<Object, Object> weakCache = CacheUtil.newWeakCache(Long.parseLong("0"));
 
+	// 创建FIFO(first in first out) 先进先出缓存.
+	// capacity – 容量
+	FIFOCache<Object, Object> fifoCache = CacheUtil.newFIFOCache(1024);
+
 	@Bean
-	public WeakCache<Object, Object> createCacheManager() {
+	public WeakCache<Object, Object> createWeakCacheManager() {
 		return this.weakCache;
+	}
+
+	@Bean
+	public FIFOCache<Object, Object> createFIFOCacheManager() {
+		return this.fifoCache;
 	}
 }
 

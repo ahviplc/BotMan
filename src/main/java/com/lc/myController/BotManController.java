@@ -1,6 +1,6 @@
 package com.lc.myController;
 
-import cn.hutool.cache.impl.WeakCache;
+import cn.hutool.cache.impl.FIFOCache;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.json.JSONUtil;
@@ -94,9 +94,12 @@ public class BotManController {
 
 		// 到这里 就是不在线 直接缓存起来 等它上线补发即可
 		// Done
-		WeakCache<Object, Object> weakCache = thisMyCache.createCacheManager();
+		// 创建弱引用缓存
+		// WeakCache<Object, Object> weakCache = thisMyCache.createWeakCacheManager();
+		// 创建FIFO(first in first out) 先进先出缓存
+		FIFOCache<Object, Object> weakCache = thisMyCache.createFIFOCacheManager();
 		weakCache.put(thisBotManBody.getUserId() + "#" + RandomUtil.randomString(8), JSONUtil.toJsonStr(thisBotManBody));
-		StaticLog.info("此待发weakCache数据中 待发消息 => {}", JSONUtil.toJsonStr(weakCache));
+		StaticLog.info("此待发weakCache数据中 {} 条待发消息 => {}", weakCache.size(), JSONUtil.toJsonStr(weakCache));
 
 		return ResultBody.success("BotMan Push Later When You are Online");
 	}

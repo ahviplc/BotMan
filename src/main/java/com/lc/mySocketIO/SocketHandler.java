@@ -1,6 +1,7 @@
 package com.lc.mySocketIO;
 
-import cn.hutool.cache.impl.WeakCache;
+import cn.hutool.cache.impl.FIFOCache;
+import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
@@ -99,7 +100,10 @@ public class SocketHandler {
 			}
 
 			// 看看有没有缓存的待发
-			WeakCache<Object, Object> weakCache = thisMyCache.createCacheManager();
+			// 创建弱引用缓存
+			// WeakCache<Object, Object> weakCache = thisMyCache.createWeakCacheManager();
+			// 创建FIFO(first in first out) 先进先出缓存
+			FIFOCache<Object, Object> weakCache = thisMyCache.createFIFOCacheManager();
 			if (weakCache.size() == 0) {
 				// Console.log("===此待发weakCache数据中 无待发消息===");
 				StaticLog.info("===此待发weakCache数据中 无待发消息===");
@@ -122,6 +126,8 @@ public class SocketHandler {
 					// 将下发成功的 thisKey 从缓存中移除
 					weakCache.remove(thisKey);
 				}
+				// 每次睡眠 500 毫秒
+				ThreadUtil.safeSleep(500);
 			}
 			// Console.log("此待发weakCache数据中 {}条待发消息 开始逐步下发 完毕 => {}", weakCache.size(), JSONUtil.toJsonStr(weakCache));
 			StaticLog.info("===此待发weakCache数据中 {} 条待发消息 开始逐步下发 完毕 => {}", weakCache.size(), JSONUtil.toJsonStr(weakCache));

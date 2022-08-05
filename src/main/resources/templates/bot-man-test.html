@@ -9,6 +9,8 @@
     <script src="https://cdn.bootcss.com/socket.io/2.5.0/socket.io.js"></script>
     <!--下面的最新版本 有些不兼容的地方 -->
     <!-- <script src="https://cdn.bootcss.com/socket.io/4.5.0/socket.io.js"></script> -->
+    <!-- day.js -->
+    <script src="https://unpkg.com/dayjs@1.11.4/dayjs.min.js"></script>
     <style>
         body {
             padding: 20px;
@@ -254,7 +256,14 @@
         }
     })
 
+    // 使用 dayjs 库
+    // 获取当前时间 格式化成 YYYY-MM-DD HH:mm:ss | 2022-08-05 09:35:18
     function getNowTime() {
+        return dayjs().format('YYYY-MM-DD HH:mm:ss');
+    }
+
+    // 自己写的 不使用
+    function getNowTime2() {
         var date = new Date();
         var year = date.getFullYear(); //获取当前年份
         var mon = date.getMonth() + 1; //获取当前月份

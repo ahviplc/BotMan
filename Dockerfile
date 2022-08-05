@@ -7,6 +7,9 @@ MAINTAINER LC ahlc@sina.cn
 # 这里的 /tmp 目录就会在运行时自动挂载为匿名卷，任何向 /tmp 中写入的信息都不会记录进容器存储层
 VOLUME /tmp
 
+# 工作目录路径 这里将系统根目录【/】当成工作路径
+WORKDIR /
+
 # 复制上下文目录下的target/BotMan-App-20220805.jar 到容器里 起别名为 app.jar
 ADD target/BotMan-App-20220805.jar /app.jar
 

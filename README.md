@@ -437,6 +437,18 @@ docker run -di -p 9528:9528 -p 9090:9090 \
 -e WHO_AM_I='LC' \
 botman:20220805
 
+这个指定了 WHO_AM_I 我是谁 
+以及宿主机的【/logs】目录(执行下面命令的目录下创建logs文件夹) 挂载到 容器的【/logs】目录 
+这是此系统应用的日志目录【logs】
+使用下面这个
+
+docker run -di -p 9528:9528 -p 9090:9090 \
+--name myBotMan \
+-e APP_NAME='BotMan => Push Anything To Anywhere' \
+-e WHO_AM_I='LC' \
+-v $PWD/logs:/logs \
+botman:20220805
+
 登录守护式容器
 
 docker exec -it myBotMan /bin/bash

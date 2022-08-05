@@ -400,8 +400,8 @@ public class MySpringBootTemplateApplication {
 
 ```markdown
 将  
-target/MySpringBootTemplate-1.0.1-SNAPSHOT.jar  
-和    
+target/BotMan-App-20220805.jar  
+和  
 Dockerfile  
 一起传到服务器端(已安装Docker环境) 放在同级目录
 

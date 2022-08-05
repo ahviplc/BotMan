@@ -98,7 +98,7 @@ Done.
 2. 运行   
    进入目录【BotMan/target/】   
    执行  
-   java -jar .\BotMan-1.0.1-SNAPSHOT.jar
+   java -jar .\BotMan-App-yyyyMMdd.jar
 
 3. 重要的一行maven命令 | can work
 
@@ -324,6 +324,8 @@ SpringBoot的项目已经对有一定的异常处理了，但是对于我们开�
 
 ## 注意点
 
+> 注意 这里的 `MySpringBootTemplate` 就是一个项目名 文件名一部分 可以代指 `YourProjectName`
+
 ```markdown
 *
 * 注意点
@@ -404,7 +406,7 @@ public class MySpringBootTemplateApplication {
 
 # Docker相关
 
-## 打包镜像
+## 打包镜像 运行创建容器的指令
 
 ```markdown
 将  

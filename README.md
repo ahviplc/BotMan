@@ -40,18 +40,18 @@ docker run -di -p 9528:9528 \
 ahviplc/botman:latest
 ```
 
-> docker pull ahviplc/botman:20220804
+> docker pull ahviplc/botman:20220805
 
 执行上面 docker 指令 获取其镜像之后 之后 执行下面的指令 创建容器即可
 
-具体版本 20220804
+具体版本 20220805
 
 ```shell
 docker run -di -p 9528:9528 \
 --name myBotMan \
 -e APP_NAME='BotMan => Push Anything To Anywhere' \
 -e WHO_AM_I='LC' \
-ahviplc/botman:20220804
+ahviplc/botman:20220805
 ```
 
 浏览器访问 测试接口
@@ -407,11 +407,11 @@ Dockerfile
 
 然后执行指令 根据此 Dockerfile 创建 Docker 镜像 此镜像命名必须都是小写字母
 
-docker build -t botman:20220804 .
+docker build -t botman:20220805 .
 
 创建 Docker 容器(下面几个 docker run 均是从自己手动 build 的镜像来创建容器)
 
-docker run -di -p 9528:9528 --name myBotMan botman:20220804
+docker run -di -p 9528:9528 --name myBotMan botman:20220805
 
 带环境变量的执行 创建 Docker 容器 可改变默认的自定义环境变量
 
@@ -421,7 +421,7 @@ docker run -di -p 9528:9528 \
 --name myBotMan \
 -e APP_NAME='BotMan => Push Anything To Anywhere' \
 -e APP_PORT=9528 \
-botman:20220804
+botman:20220805
 
 这个指定了 WHO_AM_I 我是谁 使用下面这个
 
@@ -429,7 +429,7 @@ docker run -di -p 9528:9528 \
 --name myBotMan \
 -e APP_NAME='BotMan => Push Anything To Anywhere' \
 -e WHO_AM_I='LC' \
-botman:20220804
+botman:20220805
 
 登录守护式容器
 
@@ -454,15 +454,15 @@ docker login
 
 当前版 v1.0.x
 
-docker tag botman:20220804 ahviplc/botman:20220804
+docker tag botman:20220805 ahviplc/botman:20220805
 
 当前最新版 latest
 
-docker tag botman:20220804 ahviplc/botman:latest
+docker tag botman:20220805 ahviplc/botman:latest
 
 3.0 将镜像push上传到官方Docker Hub 上
 
-docker push ahviplc/botman:20220804
+docker push ahviplc/botman:20220805
 
 和
 
@@ -547,9 +547,15 @@ http://localhost:9528/layuiVueIndex
 
 # ChangeLog
 
-## v1.0.0 | 20220804 to future | In Coding
+## 20220805
 
-> todo
+`v1 - 20220805` 对应打包 `BotMan-App-20220805.jar`
+
+> 美化了Bot Man首页
+
+> 完善了Bot Man接口
+
+> 未完待续
 
 ## v1.0.1
 
@@ -561,7 +567,7 @@ http://localhost:9528/layuiVueIndex
 
 > todo
 
-## v1.0.x
+## v1.0.x | yyyyMMdd to future | In Coding
 
 TODO
 

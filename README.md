@@ -43,6 +43,7 @@ docker run -di -p 9528:9528 -p 9090:9090 \
 --name myBotMan \
 -e APP_NAME='BotMan => Push Anything To Anywhere' \
 -e WHO_AM_I='LC' \
+-v $PWD/logs:/logs \
 ahviplc/botman:latest
 ```
 
@@ -57,6 +58,7 @@ docker run -di -p 9528:9528 -p 9090:9090 \
 --name myBotMan \
 -e APP_NAME='BotMan => Push Anything To Anywhere' \
 -e WHO_AM_I='LC' \
+-v $PWD/logs:/logs \
 ahviplc/botman:20220805
 ```
 

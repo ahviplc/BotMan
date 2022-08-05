@@ -24,16 +24,22 @@ https://hub.docker.com/r/ahviplc/getyourmachineinfo
 
 Docker Hub for getyourmachineinfo
 https://hub.docker.com/repository/docker/ahviplc/getyourmachineinfo
+
+Docker Hub for botman
+https://hub.docker.com/repository/docker/ahviplc/botman
+
+ahviplc/botman - Docker Image | Docker Hub
+https://hub.docker.com/r/ahviplc/botman
 ```
 
-# 如何使用 Docker 部署我 - todo - 待做
+# 如何使用 Docker 部署我 - Done
 
 > docker pull ahviplc/botman:latest
 
 最新版本 latest
 
 ```shell
-docker run -di -p 9528:9528 \
+docker run -di -p 9528:9528 -p 9090:9090 \
 --name myBotMan \
 -e APP_NAME='BotMan => Push Anything To Anywhere' \
 -e WHO_AM_I='LC' \
@@ -47,7 +53,7 @@ ahviplc/botman:latest
 具体版本 20220805
 
 ```shell
-docker run -di -p 9528:9528 \
+docker run -di -p 9528:9528 -p 9090:9090 \
 --name myBotMan \
 -e APP_NAME='BotMan => Push Anything To Anywhere' \
 -e WHO_AM_I='LC' \
@@ -417,7 +423,7 @@ docker run -di -p 9528:9528 --name myBotMan botman:20220805
 
 这个端口环境变量容器弃用 端口指定 端口变更(内部端口必须是9528) 可通过 -p 9528:9528 或 -p 10001:9528
 
-docker run -di -p 9528:9528 \
+docker run -di -p 9528:9528 -p 9090:9090 \
 --name myBotMan \
 -e APP_NAME='BotMan => Push Anything To Anywhere' \
 -e APP_PORT=9528 \
@@ -425,7 +431,7 @@ botman:20220805
 
 这个指定了 WHO_AM_I 我是谁 使用下面这个
 
-docker run -di -p 9528:9528 \
+docker run -di -p 9528:9528 -p 9090:9090 \
 --name myBotMan \
 -e APP_NAME='BotMan => Push Anything To Anywhere' \
 -e WHO_AM_I='LC' \

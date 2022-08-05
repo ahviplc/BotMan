@@ -20,7 +20,7 @@ ENV WHO_AM_I 'the BotMan'
 # ENV APP_PORT 9528
 
 # 声明暴露的端口
-EXPOSE 9528
+EXPOSE 9528 9090
 
 # 指定容器启动程序及参数   <ENTRYPOINT> "<CMD>"
 ENTRYPOINT ["java","-jar","/app.jar"]

@@ -563,9 +563,15 @@ http://localhost:9528/layuiVueIndex
 
 > 未完待续
 
-## v1.0.1
+## yyyyMMdd
+
+`v2`
+
+> 把传输模式改为 websocket 会比 polling 稳点 更不易掉线 更稳定
 
 > todo
+
+> 未完待续
 
 ## v1.0.2
 

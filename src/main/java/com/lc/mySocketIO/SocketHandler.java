@@ -45,14 +45,16 @@ public class SocketHandler {
 	@Autowired
 	public SocketHandler(SocketIOServer server) {
 
-		// it can work 这里我设置 4分钟 240秒 客户端ping一下 设置时间越短 ping出错的概率就大
+		// it can work 这里我设置 半分钟 30秒 客户端ping一下 设置时间越短 ping出错的概率就大
 		// 配置点在【application.properties:43】
 		// SocketIOServer 新增 ping 的监听器
 		server.addPingListener(new PingListener() {
 			@Override
 			public void onPing(SocketIOClient client) {
+				StaticLog.info("----------------------------------------------------------------------------------------------------");
 				StaticLog.info("Ping来了 getSessionId => {}", client.getSessionId());
 				StaticLog.info("Ping来了 getUrlParams 握手数据中的参数 => {}", client.getHandshakeData().getUrlParams());
+				StaticLog.info("----------------------------------------------------------------------------------------------------");
 			}
 		});
 
@@ -65,6 +67,31 @@ public class SocketHandler {
 
 	@Autowired
 	MyCache thisMyCache;
+
+	/**
+	 * 通过 client 获取 userId
+	 *
+	 * @param client
+	 * @return 没有的话 返回 null
+	 */
+	private String getUserIdBySocketIOClient(SocketIOClient client) {
+		String userId = client.getHandshakeData().getSingleUrlParam("userId");
+		return userId;
+	}
+
+	/**
+	 * 通过  userId 获取 SessionId
+	 *
+	 * @param userId
+	 * @return 没有的话 返回 null
+	 */
+	private UUID getSessionIdByUserId(String userId) {
+		// 在 clientMap 获取
+		if (clientMap.containsKey(userId)) {
+			return clientMap.get(userId);
+		}
+		return null;
+	}
 
 	/**
 	 * 获取连接的客户端ip地址
@@ -92,8 +119,10 @@ public class SocketHandler {
 		// 不可用 不准确
 		// System.out.println(getIpByClient(socketClient));
 
+		// todo 可以判断用户名 如果缓存中此用户名已经存在 将此次 socket 连接 给原因说明后 服务器主动断开
+
 		if (StrUtil.isNotBlank(userId)) {
-			// TODO 这里其实就是需要查库或者什么操作 确定用户的真实性 这里不做处理
+			// TODO 这里其实就是需要查库或者什么操作 确定用户的真实性 目前这里不做处理
 			// userService.queryUserById(userId) != null
 			if (true) {
 				// System.out.println("用户{" + userId + "}开启长连接通知, NettySocketSessionId: {" + socketClient.getSessionId().toString() + "},NettySocketRemoteAddress: {" + socketClient.getRemoteAddress().toString() + "}");
@@ -293,10 +322,24 @@ public class SocketHandler {
 		// Console.log("接收到了前端发送的消息【{}】onEvent2 botManFromHTML thisSessionId {}", thisData, socketClient.getSessionId());
 		StaticLog.info("接收到了前端发送的消息【{}】onEvent2 botManFromHTML thisSessionId {}", thisData, socketClient.getSessionId());
 
-		socketIOServer.getClient(socketClient.getSessionId()).sendEvent("message", "onEvent2 ---A---");
+		// todo 有点逻辑问题 待梳理 还是使用原来的写法吧 知道这个意思就行
+//		// 开多个浏览器 同一个用户名 应该从缓存中拿取 SessionId 才可以保证同一个用户名只能有合法的一个SessionId 其消息传输也会唯一
+//		// 使用 getUserIdBySocketIOClient() 和 getSessionIdByUserId() 来完成此操作
+//		// 新写法 保证同一个用户名从缓存中拿取那合法的唯一的一个SessionId
+//		UUID thisSessionIdOfUserIdFromCache = getSessionIdByUserId(getUserIdBySocketIOClient(socketClient));
+//		// 用一个三目运算符
+//		// 当从缓存中获取来的 SessionId 是空 则直接使用 当前socket中传来的 通过【socketClient.getSessionId()】获取
+//		socketIOServer.getClient(thisSessionIdOfUserIdFromCache != null ? thisSessionIdOfUserIdFromCache : socketClient.getSessionId()).sendEvent("message", "onEvent2 ---A---" + thisSessionIdOfUserIdFromCache);
+//		socketIOServer.getClient(thisSessionIdOfUserIdFromCache != null ? thisSessionIdOfUserIdFromCache : socketClient.getSessionId()).sendEvent("botManFromServer", "onEvent2 ---B---");
+//		// 消息发送成功 或 失败 data 为 1 是成功 其他为失败
+//		socketIOServer.getClient(thisSessionIdOfUserIdFromCache != null ? thisSessionIdOfUserIdFromCache : socketClient.getSessionId()).sendEvent("ack", "1");
+
+		// 保留原来的写法 使用
+		socketIOServer.getClient(socketClient.getSessionId()).sendEvent("message", "onEvent2 ---A---" + socketClient.getSessionId());
 		socketIOServer.getClient(socketClient.getSessionId()).sendEvent("botManFromServer", "onEvent2 ---B---");
 		// 消息发送成功 或 失败 data 为 1 是成功 其他为失败
 		socketIOServer.getClient(socketClient.getSessionId()).sendEvent("ack", "1");
+		// 保留原来的写法 使用
 	}
 
 	/**
@@ -312,7 +355,7 @@ public class SocketHandler {
 	 */
 	@OnEvent("onEventMsgSendStatus")
 	public void onEventMsgSendStatus(SocketIOClient socketClient, MessageDTO thisMessageDTO) {
-		StaticLog.info("接收到了前端发送的消息 原数据再次回到后端服务器 为了用此key请求缓存中的数据【{}】onEventMsgSendStatus onEventMsgSendStatus | thisSessionId => {}", thisMessageDTO, socketClient.getSessionId());
+		StaticLog.info("接收到了前端发送的消息 原数据再次传回到后端服务器 为了用此key清除缓存中的消息数据【{}】onEventMsgSendStatus onEventMsgSendStatus | thisSessionId => {}", thisMessageDTO, socketClient.getSessionId());
 
 		// 看看此缓存的待发
 		// 创建弱引用缓存

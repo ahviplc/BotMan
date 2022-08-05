@@ -79,8 +79,19 @@
 
 <script>
 
-    //const socket = io();
-    const socket = io('ws://localhost:9090?userId=anviplc_for_chat');
+    // 拼接请求参数对象
+    const userId = 'anviplc_for_chat'
+    const clientId = 110120
+    var opts = {
+        query: 'userId=' + userId + '&' + 'clientId=' + clientId,
+        transports: ['websocket'], // 传输模式定为 websocket 会比 polling 稳点 更不易掉线 更稳定【和服务端代码对应上 com/lc/mySocketIO/SocketConfig.java:88】
+    };
+
+    // const socket = io();
+    // const socket = io('ws://localhost:9090?userId=anviplc_for_chat');
+    // const socket = io('http://localhost:9090?userId=anviplc_for_chat');
+    // 目前使用传入参数对象的方式 初始化 socket
+    const socket = io('http://localhost:9090', opts);
 
     console.log("..........................");
 

@@ -10,6 +10,7 @@
     <!-- 备用 -->
     <!--  <link href="//unpkg.com/layui@2.7.6/dist/css/layui.css" rel="stylesheet"> -->
     <base>
+    <!-- 这是jquery库 -->
     <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
     <!-- 使用 2.5.0 版本 适配 netty-socketio 这个库 -->
     <script src="https://cdn.bootcss.com/socket.io/2.5.0/socket.io.js"></script>
@@ -181,9 +182,11 @@
 
         // 拼接请求参数对象
         var opts = {
-            query: 'clientId=' + clientId + '&' + 'userId=' + userId
+            query: 'clientId=' + clientId + '&' + 'userId=' + userId,
+            transports: ['websocket'], // 传输模式定为 websocket 会比 polling 稳点 更不易掉线 更稳定【和服务端代码对应上 com/lc/mySocketIO/SocketConfig.java:88】
         };
 
+        // 目前使用传入参数对象的方式 初始化 socket
         socket = io.connect(url, opts);
 
         socket.on('connect', function () {

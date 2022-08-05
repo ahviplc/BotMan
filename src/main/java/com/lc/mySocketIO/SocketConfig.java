@@ -79,13 +79,14 @@ public class SocketConfig {
 		// 设置最大每帧处理数据的长度，防止他人利用大数据来攻击服务器
 		config.setMaxFramePayloadLength(maxFramePayloadLength);
 
-
+		// 其他设置
 		socketConfig.setTcpNoDelay(true);
 		socketConfig.setSoLinger(0);
 
 		config.setBossThreads(bossCount);
-		//config.setTransports(Transport.WEBSOCKET);
-		config.setTransports(Transport.POLLING);
+		// 传输模式定为 websocket 会比 polling 稳点 更不易掉线
+		config.setTransports(Transport.WEBSOCKET);
+		//config.setTransports(Transport.POLLING);
 		config.setRandomSession(true);  //default is false
 
 		//鉴权

@@ -561,25 +561,29 @@ http://localhost:9528/layuiVueIndex
 
 > 完善了Bot Man接口
 
+> 把传输模式改为 websocket 会比 polling 稳点 更不易掉线 更稳定
+
 > 未完待续
 
 ## yyyyMMdd
 
-`v2`
-
-> 把传输模式改为 websocket 会比 polling 稳点 更不易掉线 更稳定
-
-> todo
-
-> 未完待续
-
-## v1.0.2
+`v2 - yyyyMMdd` 对应打包 `BotMan-App-yyyyMMdd.jar`
 
 > todo
 
 > todo
 
-## v1.0.x | yyyyMMdd to future | In Coding
+## yyyyMMdd
+
+`v3 - yyyyMMdd` 对应打包 `BotMan-App-yyyyMMdd.jar`
+
+> todo
+
+> todo
+
+## yyyyMMdd to future | In Coding
+
+> todo
 
 TODO
 

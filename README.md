@@ -269,6 +269,42 @@ https://blog.csdn.net/javacodekit/article/details/81416107
 
 GitHub - iamkun/dayjs: ⏰ Day.js 2kB immutable date-time library alternative to Moment.js with the same modern API
 https://github.com/iamkun/dayjs
+
+Layui - 经典开源模块化前端 UI 组件库
+https://layuion.com/
+
+GitHub - layui/layui: 一套遵循原生态开发模式的 Web UI 组件库，采用自身轻量级模块化规范，易上手，可以更简单快速地构建网页界面。
+https://github.com/layui/layui
+
+layui: 一套遵循原生态开发模式的 Web UI 组件库，采用自身轻量级模块化规范，极易上手，可以更简单快速地构建网页界面。
+https://gitee.com/layui/layui
+
+GitHub - layui/layui-vue: layui - vue（谐音：类 UI) 是 一 套 Vue 3.0 的 桌 面 端 组 件 库
+https://github.com/layui/layui-vue
+
+layui-vue: layui - vue（谐音：类 UI) 是 一 套 Vue 3.0 的 桌 面 端 组 件 库.
+https://gitee.com/layui/layui-vue
+
+GitHub - layui/laydate: 一款被广泛使用的高级 Web 日历组件，完全开源无偿且颜值与功能兼备，足以应对日期相关的各种业务场景
+https://github.com/layui/laydate
+
+GitHub - layui/layer: 丰富多样的 Web 弹出层组件，可轻松实现 Alert/Confirm/Prompt/ 普通提示/页面区块/iframe/tips等等几乎所有的弹出交互。目前已成为最多人使用的弹层解决方案
+https://github.com/layui/layer
+
+GitHub - layui/layui.github.io: The Layui documentation
+https://github.com/layui/layui.github.io
+
+layui.github.io/index.html at main · layui/layui.github.io · GitHub
+https://github.com/layui/layui.github.io/blob/main/docs/index.html
+
+Layui - 经典开源模块化前端 UI 组件库
+https://layui.github.io
+
+Layui - 经典开源模块化前端 UI 组件库 | 快速 | 可查看此文档
+https://layui.gitee.io/v2/
+
+CSS Fonts - CSS（层叠样式表） | MDN
+https://developer.mozilla.org/zh-CN/docs/Web/CSS/CSS_Fonts
 ```
 
 # 其他说明
@@ -489,8 +525,11 @@ http://localhost:9528/api/env
 # 一些前端展示页面总览
 
 ```markdown
-首页 - BotMan => Push Anything To Anywhere
+首页 - BotMan一下 => Push Anything To Anywhere
 http://localhost:9528
+
+首页 - BotMan一下 - 方框风格的表单
+http://localhost:9528/pane
 
 chat - BotMan => Push Anything To Anywhere
 http://localhost:9528/chat

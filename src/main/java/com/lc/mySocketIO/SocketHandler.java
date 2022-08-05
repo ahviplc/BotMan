@@ -106,7 +106,7 @@ public class SocketHandler {
 				// this.sendNotice(new MessageDTO(userId, null, null, MsgStatusEnum.ONLINE.getValue()));
 				this.sendNotice(userId + " 上线了 ... ");
 				// 广播消息
-				socketIOServer.getBroadcastOperations().sendEvent("botManFromServer", " 广播消息 " + userId + " 你真的上来了");
+				socketIOServer.getBroadcastOperations().sendEvent("botManFromServer", "广播消息 " + userId + " 你真的上来了");
 				// 单独发 测试
 				socketIOServer.getClient(socketClient.getSessionId()).sendEvent("botManFromServer", userId + " 你真的上来了");
 				socketIOServer.getClient(socketClient.getSessionId()).sendEvent("message", userId + " 你真的上来了2");

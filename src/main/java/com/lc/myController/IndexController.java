@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class IndexController {
 
 	/**
-	 * 首页 - for BotMan
+	 * 首页 - for BotMan - 不是方框风格的表单
 	 * bot-man
 	 * bot-man-test
 	 *
@@ -23,6 +23,18 @@ public class IndexController {
 	@RequestMapping("/")
 	public String index() {
 		return "bot-man-test"; // bot-man 是vue版本 todo 待做
+	}
+
+	/**
+	 * 首页 - for BotMan - 方框风格的表单
+	 * <p>
+	 * bot-man-test-pane
+	 *
+	 * @return
+	 */
+	@RequestMapping("/pane")
+	public String index_pane() {
+		return "bot-man-test-pane";
 	}
 
 	/**

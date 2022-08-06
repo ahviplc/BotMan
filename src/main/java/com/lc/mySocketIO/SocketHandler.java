@@ -11,7 +11,6 @@ import com.corundumstudio.socketio.SocketIOServer;
 import com.corundumstudio.socketio.annotation.OnConnect;
 import com.corundumstudio.socketio.annotation.OnDisconnect;
 import com.corundumstudio.socketio.annotation.OnEvent;
-import com.corundumstudio.socketio.listener.PingListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -33,7 +32,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class SocketHandler {
 
 	/**
-	 * ConcurrentHashMap 保存当前 SocketServer 用户 Id 对应关系
+	 * ConcurrentHashMap 保存当前 SocketServer 用户 Id 和其当前用户有效socket连接的sessionId 对应关系
 	 */
 	private Map<String, UUID> clientMap = new ConcurrentHashMap<>(16);
 
@@ -48,15 +47,24 @@ public class SocketHandler {
 		// it can work 这里我设置 半分钟 30秒 客户端ping一下 设置时间越短 ping出错的概率就大
 		// 配置点在【application.properties:43】
 		// SocketIOServer 新增 ping 的监听器
-		server.addPingListener(new PingListener() {
-			@Override
-			public void onPing(SocketIOClient client) {
-				StaticLog.info("----------------------------------------------------------------------------------------------------");
-				StaticLog.info("Ping来了 getSessionId => {}", client.getSessionId());
-				StaticLog.info("Ping来了 getUrlParams 握手数据中的参数 => {}", client.getHandshakeData().getUrlParams());
-				StaticLog.info("----------------------------------------------------------------------------------------------------");
-			}
+		// lambda写法
+		server.addPingListener(client -> {
+			StaticLog.info("----------------------------------------------------------------------------------------------------");
+			StaticLog.info("Ping来了 getSessionId => {}", client.getSessionId());
+			StaticLog.info("Ping来了 getUrlParams 握手数据中的参数 => {}", client.getHandshakeData().getUrlParams());
+			StaticLog.info("----------------------------------------------------------------------------------------------------");
 		});
+
+// 常规写法
+//		server.addPingListener(new PingListener() {
+//			@Override
+//			public void onPing(SocketIOClient client) {
+//				StaticLog.info("----------------------------------------------------------------------------------------------------");
+//				StaticLog.info("Ping来了 getSessionId => {}", client.getSessionId());
+//				StaticLog.info("Ping来了 getUrlParams 握手数据中的参数 => {}", client.getHandshakeData().getUrlParams());
+//				StaticLog.info("----------------------------------------------------------------------------------------------------");
+//			}
+//		});
 
 		this.socketIOServer = server;
 	}
@@ -71,18 +79,17 @@ public class SocketHandler {
 	/**
 	 * 通过 client 获取 userId
 	 *
-	 * @param client
+	 * @param client 客户端连接过来的 SocketIOClient
 	 * @return 没有的话 返回 null
 	 */
 	private String getUserIdBySocketIOClient(SocketIOClient client) {
-		String userId = client.getHandshakeData().getSingleUrlParam("userId");
-		return userId;
+		return client.getHandshakeData().getSingleUrlParam("userId");
 	}
 
 	/**
 	 * 通过  userId 获取 SessionId
 	 *
-	 * @param userId
+	 * @param userId 用户ID
 	 * @return 没有的话 返回 null
 	 */
 	private UUID getSessionIdByUserId(String userId) {
@@ -97,14 +104,15 @@ public class SocketHandler {
 	 * 获取连接的客户端ip地址
 	 *
 	 * @param client: 客户端
-	 * @return: java.lang.String
+	 * @return 得到客户端ip地址
 	 */
 	private String getIpByClient(SocketIOClient client) {
 		String sa = client.getRemoteAddress().toString();
 		if (client.getHandshakeData().getHttpHeaders().get("x-forwarded-for") != null) {
 			return client.getHandshakeData().getHttpHeaders().get("x-forwarded-for");
 		}
-		return sa.substring(1, sa.indexOf(":"));
+		// return sa.substring(1, sa.indexOf(":"));
+		return sa;
 	}
 
 	/**
@@ -114,13 +122,28 @@ public class SocketHandler {
 	 */
 	@OnConnect
 	public void onConnect(SocketIOClient socketClient) {
+
+		StaticLog.info("----------------------------------------------------------------------------------------------------");
+
 		String userId = socketClient.getHandshakeData().getSingleUrlParam("userId");
 
-		// 不可用 不准确
+		// 可用 准确
 		// System.out.println(getIpByClient(socketClient));
 
-		// todo 可以判断用户名 如果缓存中此用户名已经存在 将此次 socket 连接 给原因说明后 服务器主动断开
-
+		// 可以判断用户名是否已经上线 已经上线的 缓存中此用户名已经存在 将此用户的新的 sessionId 建立的 socketClient 断开(断开之前 通过事件告知一下其此用户名已上线)
+		if (clientMap.containsKey(userId)) { // 已经上过线
+			// 定向发送消息
+			socketIOServer.getClient(socketClient.getSessionId()).sendEvent("botManFromServer", " 定向通知消息 => " + userId + " 已经上线过了 请换个用户名再试连接 当前Connect的sessionId为 => " + socketClient.getSessionId() + " 当前已被服务端disconnect断开...");
+			// 这个有广播的效果 群发消息
+			socketIOServer.getBroadcastOperations().sendEvent("botManFromServer", " 广播通知消息 => " + userId + " 此用户名被尝试二次Connect上线 当前Connect拒绝执行 此sessionId为 => " + socketClient.getSessionId() + " 当前已被服务端disconnect断开...");
+			StaticLog.info(" 广播通知消息 => {} 此用户名被尝试二次Connect上线 当前Connect拒绝执行 此sessionId为 => {} 当前已被服务端disconnect断开...", userId, socketClient.getSessionId());
+			StaticLog.info("----------------------------------------------------------------------------------------------------");
+			// 服务端 对此【socketClient.getSessionId()】执行断开连接
+			socketClient.disconnect();
+			return;
+		}
+		// 如果此用户之前没有上线过的话 直接将此用户的 sessionId 存入 上线缓存 clientMap
+		// 接着下面逻辑
 		if (StrUtil.isNotBlank(userId)) {
 			// TODO 这里其实就是需要查库或者什么操作 确定用户的真实性 目前这里不做处理
 			// userService.queryUserById(userId) != null
@@ -149,6 +172,7 @@ public class SocketHandler {
 			if (weakCache.size() == 0) {
 				// Console.log("===此待发weakCache数据中 无待发消息===");
 				StaticLog.info("===此待发weakCache数据中 无待发消息===");
+				StaticLog.info("----------------------------------------------------------------------------------------------------");
 				return;
 			}
 			// 走到这里 代表有待发
@@ -175,6 +199,9 @@ public class SocketHandler {
 			// Console.log("此待发weakCache数据中 {}条待发消息 开始逐步下发 完毕 => {}", weakCache.size(), JSONUtil.toJsonStr(weakCache));
 			StaticLog.info("===此待发weakCache数据中 {} 条待发消息 开始逐步下发 完毕 => {}", weakCache.size(), JSONUtil.toJsonStr(weakCache));
 		}
+
+		StaticLog.info("----------------------------------------------------------------------------------------------------");
+
 	}
 
 
@@ -185,6 +212,9 @@ public class SocketHandler {
 	 */
 	@OnDisconnect
 	public void onDisConnect(SocketIOClient socketClient) {
+
+		StaticLog.info("----------------------------------------------------------------------------------------------------");
+
 		String userId = socketClient.getHandshakeData().getSingleUrlParam("userId");
 		if (StrUtil.isNotBlank(userId)) {
 			// System.out.println("用户{" + userId + "}断开长连接通知, NettySocketSessionId: {" + socketClient.getSessionId().toString() + "},NettySocketRemoteAddress: {" + socketClient.getRemoteAddress().toString() + "}");
@@ -194,10 +224,11 @@ public class SocketHandler {
 			// this.sendNotice(new MessageDTO(userId, null, null, MsgStatusEnum.OFFLINE.getValue()));
 
 			UUID thisSessionId = clientMap.get(userId);
-			// Console.log("用户 {} 下线了 此要移除的 thisSessionId => {}", thisSessionId);
-			StaticLog.info("用户 {} 下线了 此要移除的 thisSessionId => {}", userId, thisSessionId);
+			// Console.log("用户 {} 尝试下线了 此活跃的已上线 thisSessionId => {}", thisSessionId);
+			StaticLog.info("用户 {} 尝试下线了 此活跃的已上线 thisSessionId => {}", userId, thisSessionId);
 
 			SocketIOClient clientIsHave = socketIOServer.getClient(thisSessionId);
+			// 如果 当前用户名 userId 对应的 thisSessionId 的 SocketIOClient 真的为null 那代表此用户真的没有在线的客户端了
 			if (clientIsHave == null) {
 				// Console.log("用户 {} 下线了 此要移除的 thisSessionId {} 对应的 SocketIOClient 已经 disconnect ...", userId, thisSessionId);
 				StaticLog.info("用户 {} 下线了 此要移除的 thisSessionId {} 对应的 SocketIOClient 已经 disconnect ...", userId, thisSessionId);
@@ -205,6 +236,11 @@ public class SocketHandler {
 				clientMap.remove(userId);
 				// Console.log("用户 {} 下线了 此要移除的 thisSessionId {} 在clientMap移除成功 最新数据 => {}", userId, thisSessionId, JSONUtil.toJsonStr(clientMap));
 				StaticLog.info("用户 {} 下线了 此要移除的 thisSessionId {} 在clientMap移除成功 最新数据 => {}", userId, thisSessionId, JSONUtil.toJsonStr(clientMap));
+				// 群发 此用户的下线通知
+				// 这个有广播的效果 群发消息
+				socketIOServer.getBroadcastOperations().sendEvent("botManFromServer", " 广播通知消息 => " + userId + " 此用户下线了");
+			} else {
+				StaticLog.info("用户 {} 断开长连接通知, 还有活跃的已上线的SocketSessionId: {}, 尝试二次同用户名上线的此SocketSessionId: {} 此时已被真正的disconnect了 ", userId, thisSessionId, socketClient.getSessionId().toString());
 			}
 
 //          此时 SocketIOClient 为空 就不可以继续下发 sendEvent 了 不可发送消息了
@@ -212,6 +248,8 @@ public class SocketHandler {
 //			socketIOServer.getClient(thisSessionId).sendEvent("message", "你真的走了");
 
 		}
+
+		StaticLog.info("----------------------------------------------------------------------------------------------------");
 	}
 
 	/**

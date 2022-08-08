@@ -2,6 +2,8 @@
 
 > BotMan => Push Anything To Anywhere
 
+> https://github.com/ahviplc/BotMan
+
 > https://gitee.com/ahviplc/BotMan
 
 # 其他项目仓库

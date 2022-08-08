@@ -8,7 +8,7 @@
     <!-- 引入 layui css -->
     <link href="https://cdn.staticfile.org/layui/2.7.6/css/layui.css" rel="stylesheet">
     <!-- 备用 -->
-    <!--  <link href="//unpkg.com/layui@2.7.6/dist/css/layui.css" rel="stylesheet"> -->
+    <!-- <link href="//unpkg.com/layui@2.7.6/dist/css/layui.css" rel="stylesheet"> -->
     <base>
     <!-- 这是jquery库 -->
     <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
@@ -18,6 +18,8 @@
     <!-- <script src="https://cdn.bootcss.com/socket.io/4.5.0/socket.io.js"></script> -->
     <!-- day.js -->
     <script src="https://unpkg.com/dayjs@1.11.4/dayjs.min.js"></script>
+    <!-- party.js -->
+    <script src="https://cdn.jsdelivr.net/npm/party-js@latest/bundle/party.min.js"></script>
 
     <style>
         body {
@@ -137,9 +139,10 @@
 
         <div class="layui-form-item" style="margin-left: 91px">
             <!-- <button id="send">send</button> -->
-            <button type="button" class="layui-btn layui-btn-sm" id="send">send</button>
+            <button type="button" class="layui-btn layui-btn-sm" id="send" title="发送字符串消息按钮">send</button>
             <!-- <button id="sendWithObj">sendWithObj</button> -->
-            <button type="button" class="layui-btn layui-btn-sm" id="sendWithObj">sendWithObj</button>
+            <button type="button" class="layui-btn layui-btn-sm" id="sendWithObj" title="发送结构体消息按钮">sendWithObj</button>
+            <button type="button" class="layui-btn layui-btn-sm" id="sendWithGroup" title="群发|群聊按钮">sendWithGroup(群发)</button>
         </div>
     </div>
 </form>
@@ -213,6 +216,13 @@
         socket.on('botManFromServerWithObj', function (data) {
             output('<span class="username-msg"><font color="blue">' + getNowTime() + '&nbsp;</font>' + data.msgContent + ' </span>');
             console.log("sendEvent = botManFromServerWithObj => ", data);
+        });
+
+        // 群发事件 | 群聊
+        // 接收从服务端传来的消息 sendEvent = botManFromServerWithGroup 结构体消息数据
+        socket.on('botManFromServerWithGroup', function (data) {
+            output('<span class="username-msg"><font color="#556b2f">' + getNowTime() + '&nbsp;</font>' + data.msgContent + ' </span>');
+            console.log("sendEvent = botManFromServerWithGroup => ", data);
         });
 
         // 接收从服务端传来的消息 sendEvent = onEventMsgSendStatusToHTML 结构体消息数据
@@ -360,6 +370,46 @@
                 layer.msg(err.message);
             }
         }
+    })
+
+    // 群发按钮 | 群聊
+    // 发送带有结构体的消息数据
+    // 后端接收socket事件 botManFromHTMLWithGroup
+    $("#sendWithGroup").click(function () {
+        var socketEvent = 'botManFromHTMLWithGroup';
+        var userId = $("#userId").val();
+        var content = $("#content").val();
+
+        // 拼接消息结构体
+        let thisObj = {
+            userId: userId,
+            msgContent: content,
+            msgType: 'RealTimeMessage'
+        }
+
+        try {
+            // 升级写法 考虑到离线情况
+            if (socket.connected) {
+                socket.emit(socketEvent, thisObj);
+                serverOutput('<span class="connect-msg"><font color="blue">' + getNowTime() + '&nbsp;</font>' + 'sendWithGroup | 发送消息-> ' + content + ' </span>');
+            } else {
+                console.log("离线了 不可以发送了 socket.connected => ", socket.connected)
+                serverOutput('<span class="connect-msg"><font color="red">' + getNowTime() + '&nbsp;</font>' + '离线了 不可以发送了' + ' </span>');
+            }
+        } catch (err) {
+            if (err.message = "Cannot read properties of undefined (reading 'connected')") {
+                // alert('请先connect 再点我')
+                layer.msg('请先connect 再点我')
+            } else {
+                // alert(err.message);
+                layer.msg(err.message);
+            }
+        }
+
+        // 撒花特效 | can work
+        party.confetti(this, {
+            count: party.variation.range(20, 40),
+        });
     })
 
     // 使用 dayjs 库

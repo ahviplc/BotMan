@@ -426,6 +426,25 @@ public class SocketHandler {
 		sendMsgOnEvent(socketClient.getSessionId(), "botManFromServerWithObj", MyIOUtils.RealTimeMessage(getUserIdBySocketIOClient(socketClient) + " 发消息 => " + " 我是Obj实时消息 => " + thisMessageDTO.getMsgContent()));
 	}
 
+	/**
+	 * 群发 | 群聊
+	 * botManFromHTMLWithGroup | 接收带有结构体的消息数据 结构体消息数据
+	 * <p>
+	 * botManFromHTMLWithGroup：接收前端消息,方法名需与前端一致
+	 * botManFromServerWithGroup：前端接收后端发送数据的方法，方法名需与前端一致
+	 * <p>
+	 * for | http://localhost:9528 使用的 | 群发按钮
+	 *
+	 * @param socketClient   socketClient
+	 * @param thisMessageDTO 前端发送的数据 obj
+	 */
+	@OnEvent("botManFromHTMLWithGroup")
+	public void onEventWithGroup(SocketIOClient socketClient, MessageDTO thisMessageDTO) {
+		StaticLog.info("接收到了前端发送的消息【{}】onEventWithGroup botManFromHTMLWithGroup | thisSessionId => {}", thisMessageDTO, socketClient.getSessionId());
+		// 结构体消息数据 下发
+		sendMsgOnEventByBroadcastOperations("botManFromServerWithGroup", MyIOUtils.RealTimeMessage(getUserIdBySocketIOClient(socketClient) + " 群发实时消息 => " + thisMessageDTO.getMsgContent()));
+	}
+
 	// ======================================== 通用方法 ========================================
 
 	/**

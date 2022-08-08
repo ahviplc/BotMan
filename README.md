@@ -315,6 +315,12 @@ https://layui.gitee.io/v2/
 
 CSS Fonts - CSS（层叠样式表） | MDN
 https://developer.mozilla.org/zh-CN/docs/Web/CSS/CSS_Fonts
+
+party-js - npm
+https://www.npmjs.com/package/party-js
+
+GitHub - yiliansource/party-js: A JavaScript library to brighten up your user's site experience with visual effects!
+https://github.com/yiliansource/party-js
 ```
 
 # 其他说明

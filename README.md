@@ -321,6 +321,12 @@ https://www.npmjs.com/package/party-js
 
 GitHub - yiliansource/party-js: A JavaScript library to brighten up your user's site experience with visual effects!
 https://github.com/yiliansource/party-js
+
+GitHub - catdad/canvas-confetti: 🎉 on-demand confetti gun | 五彩纸屑 better
+https://github.com/catdad/canvas-confetti
+
+GitHub - antfu/vue-minesweeper: A tiny minesweeper clone in Vue 3
+https://github.com/antfu/vue-minesweeper
 ```
 
 # 其他说明
@@ -449,10 +455,7 @@ docker run -di -p 9528:9528 -p 9090:9090 \
 -e WHO_AM_I='LC' \
 botman:20220805
 
-这个指定了 WHO_AM_I 我是谁 
-以及宿主机的【/logs】目录(执行下面命令的目录下创建logs文件夹) 挂载到 容器的【/logs】目录 
-这是此系统应用的日志目录【logs】
-使用下面这个
+这个指定了 WHO_AM_I 我是谁 以及宿主机的【/logs】目录(执行下面命令的目录下创建logs文件夹) 挂载到 容器的【/logs】目录 这是此系统应用的日志目录【logs】 使用下面这个
 
 docker run -di -p 9528:9528 -p 9090:9090 \
 --name myBotMan \

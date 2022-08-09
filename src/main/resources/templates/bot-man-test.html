@@ -19,7 +19,9 @@
     <!-- day.js -->
     <script src="https://unpkg.com/dayjs@1.11.4/dayjs.min.js"></script>
     <!-- party.js -->
-    <script src="https://cdn.jsdelivr.net/npm/party-js@latest/bundle/party.min.js"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/party-js@latest/bundle/party.min.js"></script> -->
+    <!-- confetti js -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
 
     <style>
         body {
@@ -406,9 +408,24 @@
             }
         }
 
-        // 撒花特效 | can work
-        party.confetti(this, {
-            count: party.variation.range(20, 40),
+        // 撒花特效 | can work | 这个各别浏览器无法出效果
+        // https://github.com/yiliansource/party-js
+        // party.confetti(this, {
+        //     count: party.variation.range(20, 40),
+        // });
+
+        // confetti 五彩纸屑 | can work
+        // https://github.com/catdad/canvas-confetti
+        // 挂载在  window 对象。它表示浏览器窗口,所有 JavaScript 全局对象、函数以及变量均自动成为 window 对象的成员。
+        window.confetti({
+            particleCount: 100,
+            startVelocity: 30,
+            spread: 360,
+            origin: {
+                x: Math.random(),
+                // since they fall down, start a bit higher than random
+                y: Math.random() - 0.2
+            }
         });
     })
 

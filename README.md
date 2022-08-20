@@ -325,8 +325,29 @@ https://github.com/yiliansource/party-js
 GitHub - catdad/canvas-confetti: 🎉 on-demand confetti gun | 五彩纸屑 better
 https://github.com/catdad/canvas-confetti
 
+🎊 canvas-confetti demo by 【https://github.com/catdad】
+https://www.kirilv.com/canvas-confetti/
+
+unpkg | canvas-confetti
+https://unpkg.com/canvas-confetti
+
+canvas-confetti (v1.5.1) - on-demand confetti gun | BootCDN - Bootstrap 中文网开源项目免费 CDN 加速服务
+https://www.bootcdn.cn/canvas-confetti/
+
+canvas-confetti CDN by jsDelivr - A CDN for npm and GitHub
+https://www.jsdelivr.com/package/npm/canvas-confetti
+
 GitHub - antfu/vue-minesweeper: A tiny minesweeper clone in Vue 3
 https://github.com/antfu/vue-minesweeper
+
+liuyu/notify - 码云 - 开源中国 - layui消息通知插件 - 漂亮的消息提示插件，支持回调方法，可自定久关闭时间
+https://gitee.com/u33/notify
+
+notify_stand.js · liuyu/notify - 码云 - 开源中国
+https://gitee.com/u33/notify/blob/master/notify_stand.js
+
+demo.html · liuyu/notify - 码云 - 开源中国
+https://gitee.com/u33/notify/blob/master/demo.html
 ```
 
 # 其他说明
@@ -589,6 +610,8 @@ http://localhost:9528/layuiVueIndex
 > 完善了Bot Man接口
 
 > 把传输模式改为 websocket 会比 polling 稳点 更不易掉线 更稳定
+
+> 添加缓存消息的layui样式的弹框通知
 
 > 未完待续
 

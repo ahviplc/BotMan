@@ -22,6 +22,11 @@
     <!-- <script src="https://cdn.jsdelivr.net/npm/party-js@latest/bundle/party.min.js"></script> -->
     <!-- confetti js -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <!-- layui notify js -->
+    <!-- 位于 src/main/resources/static/notify_stand.js -->
+    <script src="notify_stand.js"></script>
+    <!-- 下面写法也可 -->
+    <!-- <script src="/notify_stand.js"></script> -->
 
     <style>
         body {
@@ -245,6 +250,12 @@
                 // data.beOperatedId 存放的是 缓存中的 key
                 // 直接原数据返回即可 后台可通过 data.beOperatedId 在缓存中 将其删除
                 socket.emit('onEventMsgSendStatus', data);
+                // 同时通知弹框 消息提示 layui风格
+                // src/main/resources/static/notify_stand.js
+                // 显示内容为缓存发送的消息内容 右上角显示 10秒后自动关闭 显示关闭按钮
+                // 根据后面参数的数据类型直接对应是针对哪一个配置项 | msg | position | duration | showClose | 回调函数
+                // 具体代码实现可见 static/notify_stand.js:145
+                notify.info(data.msgContent, "topRight", 10000);
             }
         });
 

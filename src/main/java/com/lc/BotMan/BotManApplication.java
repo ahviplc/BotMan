@@ -2,6 +2,7 @@ package com.lc.BotMan;
 
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.log.StaticLog;
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -12,8 +13,10 @@ import org.springframework.core.env.Environment;
 @ComponentScan(basePackages = {
 		"com.lc.mySocketIO",
 		"com.lc.myController",
+		"com.lc.myBatisPlus",
 		"com.lc.myException",
 		"com.lc.myAspect"})
+@MapperScan("com.lc.myBatisPlus.mapper")
 public class BotManApplication {
 
 	public static void main(String[] args) {

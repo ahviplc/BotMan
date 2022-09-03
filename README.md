@@ -348,6 +348,9 @@ https://gitee.com/u33/notify/blob/master/notify_stand.js
 
 demo.html · liuyu/notify - 码云 - 开源中国
 https://gitee.com/u33/notify/blob/master/demo.html
+
+@Resource和@Autowired的区别_utada hikki的博客-CSDN博客_@resource
+https://blog.csdn.net/mrxutada/article/details/118811930
 ```
 
 # 其他说明
@@ -412,6 +415,52 @@ public class MySpringBootTemplateApplication {
 public class MySpringBootTemplateApplication {
 }
 ```
+
+`MapperScan`的写法
+
+> 扫描Mapper文件
+
+```java
+//@MapperScan({"com.lc.myBatisPlus.mapper","com.lc.myBatisPlus.mapper"})
+//@MapperScan({"com.lc.myBatisPlus.mapper"})
+@MapperScan("com.lc.myBatisPlus.mapper")
+public class BotManApplication {}
+```
+
+## sql
+
+```sql
+-- ----------------------------
+-- Table structure for user
+-- ----------------------------
+DROP TABLE IF EXISTS `user`;
+-- auto-generated definition
+create table user
+(
+    id CHAR(16) not null primary key,
+    name CHAR(20) default NULL,
+    age INTEGER default NULL,
+    email CHAR(20) default NULL,
+    register_time datetime default NULL,
+    user_name CHAR(20) default NULL,
+    password char(20) default 123456
+);
+-- add data
+insert into user (id, name, age, email, register_time, user_name, password)
+values ("1","admin",18,"admin@admin.cn",1662816864000,"admin","123456");
+```
+
+`有1条默认数据`
+
+>  1,LC,18,ahlc@sina.cn,1662816864000,ahviplc
+
+`查看数据`
+
+> http://localhost:9528/api/show
+
+`新增随机模拟数据`
+
+> http://localhost:9528/api/insert2
 
 ## git提交的一些说明
 

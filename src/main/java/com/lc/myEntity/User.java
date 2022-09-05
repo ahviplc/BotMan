@@ -3,6 +3,7 @@ package com.lc.myEntity;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 
 import java.io.Serializable;
@@ -49,6 +50,12 @@ public class User implements Serializable {
 	 * 注册时间
 	 */
 	private Date registerTime;
+
+	/**
+	 * 逻辑删除 | 删除标识符
+	 */
+	@TableLogic
+	private Integer delFlag;
 
 	public User() {
 	}
@@ -107,6 +114,14 @@ public class User implements Serializable {
 
 	public void setRegisterTime(Date registerTime) {
 		this.registerTime = registerTime;
+	}
+
+	public Integer getDelFlag() {
+		return delFlag;
+	}
+
+	public void setDelFlag(Integer delFlag) {
+		this.delFlag = delFlag;
 	}
 
 	public String toString() {

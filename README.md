@@ -351,6 +351,37 @@ https://gitee.com/u33/notify/blob/master/demo.html
 
 @Resource和@Autowired的区别_utada hikki的博客-CSDN博客_@resource
 https://blog.csdn.net/mrxutada/article/details/118811930
+
+@Repository和@Mapper注解的区别_有条理hac的博客-CSDN博客
+https://blog.csdn.net/weixin_43527947/article/details/120554866
+
+MyBatis-Plus
+https://baomidou.com/
+
+GitHub - baomidou/mybatis-plus: An powerful enhanced toolkit of MyBatis for simplify development
+https://github.com/baomidou/mybatis-plus
+
+666666 - 栗子挺全 - Mybatis-plus 动态条件查询QueryWrapper的使用_12程序猿的博客-CSDN博客_querywrapper | 下面是源代码地址
+https://blog.csdn.net/qq_26383975/article/details/119646390
+
+GitHub - katie1221/mybatis-plus-wrapper: SpringBoot+mybatis-plus 条件构造器之QueryWrapper的使用
+https://github.com/katie1221/mybatis-plus-wrapper
+
+666666 -IDEA根据这个设置使用原始tab吧 这是设置路径 也可设置此页面的imports选项卡实现自动导入包以及不使用*来忽略包 - IntelliJ Idea如何将设置tab设置为4个空格-CSDN博客_
+idea设置tab为4个空格或使用原始tab
+https://blog.csdn.net/wo541075754/article/details/119456370
+
+Mybatis-Plus 常用对比字段 eq、ne、gt、lt、ge、le_粥白快跑的博客-CSDN博客_mybatis-plus中gt
+https://blog.csdn.net/QL753123/article/details/124231470
+
+【Mybatis-Plus进阶学习（二）】逻辑删除 - 走看看
+http://t.zoukankan.com/zllk-p-14239546.html
+
+逻辑删除 | MyBatis-Plus
+https://baomidou.com/pages/6b03c5/#使用方法
+
+mybatisplus配置打印sql语句_渝小白的博客-CSDN博客_mybatisplus打印sql语句
+https://blog.csdn.net/qq_42425515/article/details/117790240
 ```
 
 # 其他说明
@@ -424,12 +455,21 @@ public class MySpringBootTemplateApplication {
 //@MapperScan({"com.lc.myBatisPlus.mapper","com.lc.myBatisPlus.mapper"})
 //@MapperScan({"com.lc.myBatisPlus.mapper"})
 @MapperScan("com.lc.myBatisPlus.mapper")
-public class BotManApplication {}
+public class BotManApplication {
+}
 ```
+
+`项目的代码缩进`
+
+此项目的`代码缩进`和`hutool`一样 上面有在IDEA中的设置方法教程链接 包含 `imports 自动导包` `不使用*来忽略包` 的设置
+
+> https://hutool.cn/docs/#/
+
+> Hutool的缩进按照默认（tab）缩进，所以请遵守（不要和我争执空格与tab的问题，这是一个病人的习惯）
 
 ## sql
 
-```sql
+```sqlite
 -- ----------------------------
 -- Table structure for user
 -- ----------------------------
@@ -437,22 +477,31 @@ DROP TABLE IF EXISTS `user`;
 -- auto-generated definition
 create table user
 (
-    id CHAR(16) not null primary key,
-    name CHAR(20) default NULL,
-    age INTEGER default NULL,
-    email CHAR(20) default NULL,
+    id            CHAR(16) not null primary key,
+    name          CHAR(20) default NULL,
+    age           INTEGER  default NULL,
+    email         CHAR(20) default NULL,
     register_time datetime default NULL,
-    user_name CHAR(20) default NULL,
-    password char(20) default 123456
+    user_name     CHAR(20) default NULL,
+    password      char(20) default 123456,
+    del_flag      INT      default 0
 );
--- add data
-insert into user (id, name, age, email, register_time, user_name, password)
-values ("1","admin",18,"admin@admin.cn",1662816864000,"admin","123456");
+-- add data | 测试数据
+insert into user (id, name, age, email, register_time, user_name, password, del_flag)
+values ("11", "admin", 18, "admin@admin.cn", 1662816864000, "admin", "123456", 0);
+INSERT INTO "main"."user"("id", "name", "age", "email", "register_time", "user_name", "password", del_flag)
+VALUES ('1', 'LC', 18, 'ahlc@sina.cn', 1662816864000, 'ahviplc', '123456', 0);
+INSERT INTO "main"."user"("id", "name", "age", "email", "register_time", "user_name", "password", del_flag)
+VALUES ('1566594703233679361', 'LC', NULL, NULL, 1662340257826, 'admin2', '123456', 0);
+INSERT INTO "main"."user"("id", "name", "age", "email", "register_time", "user_name", "password", del_flag)
+VALUES ('1566594703233679362', 'LC', NULL, 'admin@admin.com', 1662340257826, 'admin3', '123456', 0);
+INSERT INTO "main"."user"("id", "name", "age", "email", "register_time", "user_name", "password", del_flag)
+VALUES ('1566594703233679363', 'LC', 22, 'admin@admin.com', 1662340257826, 'admin4', '123456', 0);
 ```
 
 `有1条默认数据`
 
->  1,LC,18,ahlc@sina.cn,1662816864000,ahviplc
+> 1,LC,18,ahlc@sina.cn,1662816864000,ahviplc,123456,0
 
 `查看数据`
 

@@ -29,12 +29,19 @@
 
     <dependencies>
 
-        <!-- sqlite3驱动包 -->
+        <!-- mysql驱动包 -->
         <dependency>
-            <groupId>org.xerial</groupId>
-            <artifactId>sqlite-jdbc</artifactId>
-            <version>3.21.0.1</version>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <scope>runtime</scope>
         </dependency>
+
+        <!-- sqlite3驱动包 -->
+        <!--        <dependency>-->
+        <!--            <groupId>org.xerial</groupId>-->
+        <!--            <artifactId>sqlite-jdbc</artifactId>-->
+        <!--            <version>3.21.0.1</version>-->
+        <!--        </dependency>-->
 
         <!-- mybatis-plus插件 -->
         <dependency>

@@ -58,7 +58,7 @@ class BotManApplicationTests {
 	}
 
 	@Test
-	void testMyBatisPlusForSqlite() {
+	void testMyBatisPlusForSqliteAndMySQL() {
 		// ====================================================
 		// 查询所有
 		// 不指定逻辑删除 默认 del_flag=0

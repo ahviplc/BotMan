@@ -1,5 +1,7 @@
 # BotMan
 
+> 数据源使用 MySQL 分支 | 分支名称【BotMan-MySQL】
+
 > BotMan => Push Anything To Anywhere
 
 > https://github.com/ahviplc/BotMan
@@ -382,6 +384,18 @@ https://baomidou.com/pages/6b03c5/#使用方法
 
 mybatisplus配置打印sql语句_渝小白的博客-CSDN博客_mybatisplus打印sql语句
 https://blog.csdn.net/qq_42425515/article/details/117790240
+
+遇到的错误：Mysql 报错Duplicate entry '值' for key '字段名'的解决 - 慢漫长路 - 博客园
+https://www.cnblogs.com/manmanchanglu/p/12044400.html
+
+spring boot配置mysql_m0_67393828的博客-CSDN博客_springboot配置mysql
+https://blog.csdn.net/m0_67393828/article/details/126596337
+
+`com.mysql.cj.jdbc.Driver`和`com.mysql.jdbc.Driver`区别以及时区问题_榴莲男孩的博客-CSDN博客_com.mysql.cj.jdbc.driver
+https://blog.csdn.net/weixin_44505177/article/details/114794465
+
+com.mysql.cj.jdbc.Driver和com.mysql.jdbc.Driver的区别_wshanshi的博客-CSDN博客_com.mysql.cj.jdbc.driver
+https://blog.csdn.net/weixin_43770545/article/details/90486809
 ```
 
 # 其他说明
@@ -469,39 +483,11 @@ public class BotManApplication {
 
 ## sql
 
-```sqlite
--- ----------------------------
--- Table structure for user
--- ----------------------------
-DROP TABLE IF EXISTS `user`;
--- auto-generated definition
-create table user
-(
-    id            CHAR(16) not null primary key,
-    name          CHAR(20) default NULL,
-    age           INTEGER  default NULL,
-    email         CHAR(20) default NULL,
-    register_time datetime default NULL,
-    user_name     CHAR(20) default NULL,
-    password      char(20) default 123456,
-    del_flag      INT      default 0
-);
--- add data | 测试数据
-insert into user (id, name, age, email, register_time, user_name, password, del_flag)
-values ("11", "admin", 18, "admin@admin.cn", 1662816864000, "admin", "123456", 0);
-INSERT INTO "main"."user"("id", "name", "age", "email", "register_time", "user_name", "password", del_flag)
-VALUES ('1', 'LC', 18, 'ahlc@sina.cn', 1662816864000, 'ahviplc', '123456', 0);
-INSERT INTO "main"."user"("id", "name", "age", "email", "register_time", "user_name", "password", del_flag)
-VALUES ('1566594703233679361', 'LC', NULL, NULL, 1662340257826, 'admin2', '123456', 0);
-INSERT INTO "main"."user"("id", "name", "age", "email", "register_time", "user_name", "password", del_flag)
-VALUES ('1566594703233679362', 'LC', NULL, 'admin@admin.com', 1662340257826, 'admin3', '123456', 0);
-INSERT INTO "main"."user"("id", "name", "age", "email", "register_time", "user_name", "password", del_flag)
-VALUES ('1566594703233679363', 'LC', 22, 'admin@admin.com', 1662340257826, 'admin4', '123456', 0);
-```
+`sql语句`请看下面目录的sql文件
 
-`有1条默认数据`
+> docs/BotMan-MySQL.sql
 
-> 1,LC,18,ahlc@sina.cn,1662816864000,ahviplc,123456,0
+`mysqlplus`的使用操作兼容mysql和sqlite 所有切换数据库源对这些服务无任何影响
 
 `查看数据`
 

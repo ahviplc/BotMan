@@ -1,5 +1,6 @@
 # 指定基础镜像，在其上进行定制
-FROM java:8
+# FROM java:8
+FROM ahviplc/java-8
 
 # 维护者信息
 MAINTAINER LC ahlc@sina.cn

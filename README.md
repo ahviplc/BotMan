@@ -405,6 +405,12 @@ https://github.com/zuiyu-main/springboot-docker
 
 Docker部署SpringBoot+MySQL项目 - 灰信网（软件开发博客聚合）
 https://www.freesion.com/article/9664423645/
+
+Docker之部署MySQL v5.6_GoGo在努力的博客-CSDN博客_docker部署mysql5.6
+https://blog.csdn.net/weixin_52690231/article/details/123658206
+
+MySQL允许外部访问_Demonwuwen的博客-CSDN博客_mysql 外部访问
+https://blog.csdn.net/weixin_44336181/article/details/121092631
 ```
 
 # 其他说明
@@ -491,6 +497,8 @@ public class BotManApplication {
 > Hutool的缩进按照默认（tab）缩进，所以请遵守（不要和我争执空格与tab的问题，这是一个病人的习惯）
 
 ## sql
+
+> 使用docker部署mysql 具体步骤看下面
 
 `sql语句`请看下面目录的sql文件
 
@@ -619,6 +627,81 @@ docker push ahviplc/botman:latest
 
 docker logout
 ```
+
+# Docker MySQL | run this app
+
+> 执行下面命令
+
+```shell
+# 在任意你想的目录下创建mysql目录用于存储mysql数据信息
+mkdir -p /docker-data/mysql
+cd /docker-data/mysql
+```
+
+`docker run`
+
+```shell
+docker run -id -p 3306:3306 \
+--name=mysql-docker \
+-v $PWD/conf:/etc/mysql/conf.d \
+-v $PWD/logs:/logs \
+-v $PWD/data:/var/lib/mysql \
+-e MYSQL_ROOT_PASSWORD=123456 \
+mysql:5.7.34
+```
+
+进行一些初始化设置
+
+`进入容器内部`
+
+```shell
+docker exec -it mysql-docker /bin/bash
+mysql -uroot -p123456
+```
+
+`配置外部可访问`
+
+MySQL允许外部访问_Demonwuwen的博客-CSDN博客_mysql 外部访问
+
+> https://blog.csdn.net/weixin_44336181/article/details/121092631
+
+执行 `docs/BotMan-MySQL.sql` 脚本
+
+`run app by docker` | 打包镜像 看 # Docker相关
+
+> `从【botman:20220805】镜像抓取`
+
+```shell
+docker run -di -p 9528:9528 -p 9090:9090 \
+--name myBotMan-mysql \
+--link mysql-docker:mysql-docker-alias \
+-e APP_NAME='BotMan => Push Anything To Anywhere' \
+-e WHO_AM_I='LC' \
+-v $PWD/logs:/logs \
+botman:20220805
+```
+
+> `从 Dockerhub | ahviplc 抓取`
+
+```shell
+docker run -di -p 9528:9528 -p 9090:9090 \
+--name myBotMan-mysql \
+--link mysql-docker:mysql-docker-alias \
+-e APP_NAME='BotMan => Push Anything To Anywhere' \
+-e WHO_AM_I='LC' \
+-v $PWD/logs:/logs \
+ahviplc/botman:20220805
+```
+
+`查看日志`
+
+> docker logs -f --tail=30 myBotMan-mysql
+
+`访问首页`
+
+> http://your_ip:9528
+
+enjoy...
 
 # 一些接口总览
 

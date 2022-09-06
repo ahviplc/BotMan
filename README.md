@@ -396,6 +396,15 @@ https://blog.csdn.net/weixin_44505177/article/details/114794465
 
 com.mysql.cj.jdbc.Driver和com.mysql.jdbc.Driver的区别_wshanshi的博客-CSDN博客_com.mysql.cj.jdbc.driver
 https://blog.csdn.net/weixin_43770545/article/details/90486809
+
+docker 部署springboot项目，连接mysql容器 - 微信公众号-醉鱼Java - 博客园
+https://www.cnblogs.com/zuiyu/p/16515929.html
+
+GitHub - zuiyu-main/springboot-docker: springboot集成maven-docker插件，自动构建镜像
+https://github.com/zuiyu-main/springboot-docker
+
+Docker部署SpringBoot+MySQL项目 - 灰信网（软件开发博客聚合）
+https://www.freesion.com/article/9664423645/
 ```
 
 # 其他说明
